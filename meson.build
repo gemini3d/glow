@@ -14,3 +14,10 @@ snoem_src = files('snoem.f90', 'snoemint.f90', 'geomag.f90')
 utils_src = files('mzgrid.f90', 'conduct.f90', 'nrlmsise00.f', 'iri90.f')
 
 cglow = library('cglow', cglow_src, snoem_src, utils_src, fortran_args : fargs_old)
+
+glow_basic_exe = executable('glowbasic', 'glowbasic.f90', link_with: cglow)
+
+test('GlowBasic', glow_basic_exe,
+  args: ['basic.nml'],
+  workdir: meson.current_source_dir(),
+  timeout: 10)
