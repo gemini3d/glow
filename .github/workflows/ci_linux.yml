@@ -10,7 +10,22 @@ on:
 
 jobs:
 
-  # cmake was too old
+  cmake:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - run: sudo apt install -yq --no-install-recommends gfortran
+    - run: cmake -B build
+      env:
+        FC: gfortran
+    - run: cmake --build build --parallel
+    - run: ctest --parallel -V
+      working-directory: build
+    - uses: actions/upload-artifact@v1
+      if: failure()
+      with:
+        name: Linux_Cmake_log
+        path: build/CMakeFiles/CMakeError.log
 
   meson:
     runs-on: ubuntu-latest
