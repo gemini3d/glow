@@ -10,7 +10,9 @@ on:
 
 jobs:
 
+  # cmake too old
   cmake:
+    if: false
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
