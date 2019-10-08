@@ -14,7 +14,7 @@
 ! Inputs:
 !         jmax   Number of altitude levels used by GLOW (should = 102 for MSIS/IRI/NOEM runs)
 !         nex    Number of ionized/excited species (for array zxden)
-!         idate  Nate in yyyyddd or yyddd format
+!         idate  Date in yyyyddd or yyddd format
 !         ut     Universal time, seconds)
 !         glat   Latitude, degrees
 !         glong  Longitude, degrees
@@ -42,12 +42,13 @@
 
 subroutine mzgrid (jmax,nex,idate,ut,glat,glong,stl,f107a,f107,f107p,ap,iri90_dir, &
                    z,zo,zo2,zn2,zns,znd,zno,ztn,zun,zvn,ze,zti,zte,zxden)
+  use, intrinsic :: iso_fortran_env, only : stderr=>error_unit
 
   implicit none
 
   integer,intent(in) :: jmax,nex,idate
   real,intent(in) :: ut,glat,glong,stl,f107a,f107,f107p,ap
-  character(len=1024),intent(in) :: iri90_dir
+  character(*),intent(in) :: iri90_dir
   real,intent(out) :: z(jmax),zo(jmax),zo2(jmax),zn2(jmax),zns(jmax),znd(jmax), &
        zno(jmax),ztn(jmax),zti(jmax),zte(jmax),zun(jmax),zvn(jmax),ze(jmax),zxden(nex,jmax)
 
@@ -58,8 +59,8 @@ subroutine mzgrid (jmax,nex,idate,ut,glat,glong,stl,f107a,f107,f107p,ap,iri90_di
   data sw/25*1./
 
   if (jmax /= 102) then
-    write(6,"('mzgrid: unknown JMAX = ',i5)") jmax
-    stop 'mzgrid'
+    write(stderr,"(A,i5)") 'mzgrid: unknown JMAX = ', jmax
+    error stop
   endif
 
   allocate(outf(11,jmax))
