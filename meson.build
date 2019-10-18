@@ -13,13 +13,24 @@ cglow_src = files('glow.f90', 'cglow.f90', 'fieldm.f', 'solzen.f90', 'ssflux.f90
 snoem_src = files('snoem.f90', 'snoemint.f90', 'geomag.f90')
 utils_src = files('mzgrid.f90', 'conduct.f90')
 
-grid = library('grid', 'nrlmsise00.f', 'iri90.f', fortran_args : fargs_old)
+gsrc = files('iri90.f')
+# this avoids duplicated symbol linking error on MacOS
+if not meson.is_subproject()
+  gsrc += files('nrlmsise00.f')
+endif
+grid = library('grid',
+  sources: gsrc,
+  fortran_args : fargs_old)
 
 cglow = library('cglow', cglow_src, snoem_src, utils_src, link_with: grid)
 
-glow_basic_exe = executable('glowbasic', 'glowbasic.f90', link_with: cglow)
+if not meson.is_subproject()
+# this avoids duplicated symbol linking error on MacOS
+  glow_basic_exe = executable('glowbasic', 'glowbasic.f90',
+    link_with: cglow)
 
-test('GlowBasic', glow_basic_exe,
-  args: ['basic.nml'],
-  workdir: meson.current_source_dir(),
-  timeout: 10)
+  test('GlowBasic', glow_basic_exe,
+    args: ['basic.nml'],
+    workdir: meson.current_source_dir(),
+    timeout: 10)
+endif
