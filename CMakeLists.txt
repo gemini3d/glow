@@ -22,13 +22,15 @@ endif()
 
 set(cglow_src glow.f90 cglow.f90 fieldm.f solzen.f90 ssflux.f90 rcolum.f90 qback.f90 etrans.f90 exsect.f gchem.f90 bands.f90 ephoto.f90 egrid.f90 maxt.f90)
 set(snoem_src snoem.f90 snoemint.f90 geomag.f90)
-set(utils_src mzgrid.f90 conduct.f90)
-
-add_library(msis_iri nrlmsise00.f iri90.f)
-target_compile_options(msis_iri PRIVATE ${old})
+set(utils_src mzgrid.f90 conduct.f90 iri90.f nrlmsise00.f)
 
 add_library(cglow ${cglow_src} ${snoem_src} ${utils_src})
-target_link_libraries(cglow PRIVATE msis_iri)
+target_compile_options(cglow PRIVATE ${old})
+
+if(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_PROJECT_DIR)
+  # used as ExternalProject
+  return()
+endif()
 
 add_executable(glowbasic glowbasic.f90)
 target_link_libraries(glowbasic PRIVATE cglow)
