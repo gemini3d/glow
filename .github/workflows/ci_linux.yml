@@ -2,22 +2,29 @@ name: ci_linux
 
 on:
   push:
-    paths-ignore:
-      - "**/*.md"
+    paths:
+      - "**/*.f"
+      - "**/*.f90"
+      - ".github/workflows/ci_linux.yml"
   pull_request:
-    paths-ignore:
-      - "**/*.md"
+    paths:
+      - "**/*.f"
+      - "**/*.f90"
+      - ".github/workflows/ci_linux.yml"
 
 jobs:
 
-  # cmake too old
   cmake:
-    if: false
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - run: sudo apt install -yq --no-install-recommends gfortran
-    - run: cmake -B build
+    - name: Install Prereqs
+      run: |
+        sudo apt update -yq
+        sudo apt install -yq --no-install-recommends gfortran
+    - run: mkdir build
+    - run: cmake ..
+      working-directory: build
       env:
         FC: gfortran
     - run: cmake --build build --parallel
@@ -36,11 +43,15 @@ jobs:
     - uses: actions/setup-python@v1
       with:
         python-version: '3.x'
-    - run: pip install meson
-    - run: sudo apt install -yq --no-install-recommends ninja-build gfortran
+    - run: pip install meson ninja
+    - name: Install Prereqs
+      run: |
+        sudo apt update -yq
+        sudo apt install -yq --no-install-recommends gfortran
     - run: meson setup build
       env:
         FC: gfortran
+    - run: ninja -C build
     - run: meson test -C build -v
     - uses: actions/upload-artifact@v1
       if: failure()
