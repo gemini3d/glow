@@ -28,7 +28,7 @@ endif
 glow_basic_exe = executable('glowbasic', 'glowbasic.f90',
   link_with: cglow)
 
-test('GlowBasic', glow_basic_exe,
+test('glow_basic', glow_basic_exe,
   args: ['basic.nml'],
   workdir: meson.current_source_dir(),
   timeout: 10)
