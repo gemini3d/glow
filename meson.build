@@ -12,6 +12,8 @@ cglow_src = files('glow.f90', 'cglow.f90', 'fieldm.f', 'solzen.f90', 'ssflux.f90
 snoem_src = files('snoem.f90', 'snoemint.f90', 'geomag.f90')
 utils_src = files('mzgrid.f90', 'conduct.f90', 'iri90.f')
 
+data_dir = meson.current_source_dir() / 'data'
+
 # this avoids duplicated symbol linking error on MacOS
 if not meson.is_subproject()
   utils_src += files('nrlmsise00.f')
