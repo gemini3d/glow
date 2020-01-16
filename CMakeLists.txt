@@ -34,7 +34,7 @@ set(utils_src mzgrid.f90 conduct.f90 iri90.f nrlmsise00.f)
 add_library(glow ${cglow_src} ${snoem_src} ${utils_src})
 target_compile_options(glow PRIVATE ${_glow_old})
 target_compile_definitions(glow INTERFACE
-  $<BUILD_INTERFACE:DATADIR="${CMAKE_CURRENT_BINARY_DIR}/data/">
+  $<BUILD_INTERFACE:DATADIR="${CMAKE_CURRENT_SOURCE_DIR}/data/">
   $<INSTALL_INTERFACE:DATADIR="data/">)
 target_include_directories(glow INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
