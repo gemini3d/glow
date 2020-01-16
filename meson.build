@@ -17,7 +17,7 @@ if not meson.is_subproject()
   utils_src += files('nrlmsise00.f')
 endif
 
-cglow = library('cglow',
+cglow = library('glow',
   sources: [cglow_src, snoem_src, utils_src],
   fortran_args : fargs_old)
 

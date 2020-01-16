@@ -71,8 +71,8 @@ endif()
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/install.cmake)
 
-
 # --- package
+
 if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(CPACK_GENERATOR ZIP)
   set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Glowlicense.txt")
