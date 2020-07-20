@@ -58,20 +58,6 @@ add_test(NAME glow_basic
   COMMAND $<TARGET_FILE:glowbasic> basic.nml
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-
-set(CTEST_TEST_TIMEOUT 15)
-# --- install config
-
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  if(WIN32)
-    set(HOME $ENV{USERPROFILE})
-  else()
-    set(HOME $ENV{HOME})
-  endif()
-
-  set(CMAKE_INSTALL_PREFIX "${HOME}/.local/${PROJECT_NAME}" CACHE PATH "..." FORCE)
-endif()
-
 include(${CMAKE_CURRENT_SOURCE_DIR}/install.cmake)
 
 # --- package

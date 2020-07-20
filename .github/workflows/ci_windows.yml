@@ -8,48 +8,30 @@ on:
       - '**/*.txt'
       - '**/*.build'
       - ".github/workflows/ci_windows.yml"
-  pull_request:
-    paths:
-      - "**/*.f"
-      - "**/*.f90"
-      - '**/*.txt'
-      - '**/*.build'
-      - ".github/workflows/ci_windows.yml"
 
 jobs:
 
   cmake:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
-    - run: cmake -B build -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"
-      env:
-        FC: gfortran
-    - run: cmake --build build --parallel
-    - uses: actions/upload-artifact@v1
-      if: failure()
-      with:
-        name: Windows_Cmake_log
-        path: build/CMakeFiles/CMakeError.log
-
-    - run: ctest --parallel -V
-      working-directory: build
+    - run: ctest -S setup.cmake -VV
 
 
   meson:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
-    - run: pip install -r requirements.txt
+
+    - run: pip install meson ninja
 
     - run: meson setup build
-      env:
-        FC: gfortran
-    - run: ninja -C build
+
+    - run: meson compile -C build
     - uses: actions/upload-artifact@v1
       if: failure()
       with:
