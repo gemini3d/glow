@@ -5,8 +5,8 @@ on:
     paths:
       - "**/*.f"
       - "**/*.f90"
-      - '**/*.txt'
-      - '**/*.build'
+      - "**/CMakeLists.txt"
+      - "**.cmake"
       - ".github/workflows/ci_windows.yml"
 
 jobs:
@@ -20,6 +20,7 @@ jobs:
 
 
   meson:
+    if: false  # not used currently, but should work
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2

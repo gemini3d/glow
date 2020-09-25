@@ -3,10 +3,8 @@ name: ci_macos
 on:
   push:
     paths:
-      - "**/*.f"
-      - "**/*.f90"
-      - '**/*.txt'
-      - '**/*.build'
+      - "**/CMakeLists.txt"
+      - "**.cmake"
       - ".github/workflows/ci_macos.yml"
 
 
@@ -17,12 +15,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - run: brew install gcc
-
     - run: ctest -S setup.cmake -VV
-
+      env:
+        FC: gfortran-9
+        CC: gcc-9
 
   meson:
+    if: false  # not used currently, but should work
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
@@ -30,10 +29,12 @@ jobs:
       with:
         python-version: '3.x'
 
-    - run: pip install meson
-    - run: brew install gcc ninja
+    - run: pip install meson ninja
 
     - run: meson setup build
+      env:
+        FC: gfortran-9
+        CC: gcc-9
 
     - run: meson compile -C build
     - uses: actions/upload-artifact@v1
