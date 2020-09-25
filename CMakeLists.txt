@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Debug or Release" FORCE)
 endif()
@@ -7,23 +7,20 @@ project(glow
   VERSION 0.981
   DESCRIPTION "NCAR GLOW ionospheric model"
   HOMEPAGE_URL https://github.com/gemini3d/glow)
-enable_testing()
+
+include(CTest)
 
 if(CMAKE_Fortran_COMPILER_ID STREQUAL GNU)
   set(_glow_old -std=legacy -Wno-pedantic -w -fno-implicit-none -Wno-error=array-bounds -fcheck=no-all)
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
   if(WIN32)
-    set(_glow_old /nowarn /nocheck)
+    set(_glow_old /nostand /nowarn /nocheck)
   else()
-    set(_glow_old -nowarn -nocheck)
+    set(_glow_old -nostand -nowarn -nocheck)
   endif()
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL Cray)
   set(_glow_old -m 4)
-elseif(CMAKE_Fortran_COMPILER_ID STREQUAL PGI)
-  set(_glow_old -w)
-elseif(CMAKE_Fortran_COMPILER_ID STREQUAL Flang)
-  set(_glow_old -w)
-elseif(CMAKE_Fortran_COMPILER_ID STREQUAL NAG)
+else()  # Flang, Nvidia, NAG, etc.
   set(_glow_old -w)
 endif()
 
@@ -45,20 +42,23 @@ set_target_properties(glow PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 add_library(glow::glow ALIAS glow)
 
-if(NOT PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-   return()
-endif()
-
 # --- tests
+
+if(BUILD_TESTING)
 
 add_executable(glowbasic glowbasic.f90)
 target_link_libraries(glowbasic PRIVATE glow::glow)
-
 add_test(NAME glow_basic
   COMMAND $<TARGET_FILE:glowbasic> basic.nml
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
+endif(BUILD_TESTING)
+
+# --- install
+
+if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 include(${CMAKE_CURRENT_SOURCE_DIR}/install.cmake)
+endif()
 
 # --- package
 
