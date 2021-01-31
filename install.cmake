@@ -1,11 +1,12 @@
 # --- install / packaging
 
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS glow msis00
   EXPORT ${PROJECT_NAME}Targets
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include)
+
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/ DESTINATION include)
 
 
