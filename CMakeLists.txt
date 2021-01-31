@@ -30,7 +30,7 @@ set(cglow_src glow.f90 cglow.f90 fieldm.f solzen.f90 ssflux.f90 rcolum.f90 qback
 set(snoem_src snoem.f90 snoemint.f90 geomag.f90)
 set(utils_src mzgrid.f90 conduct.f90 iri90.f)
 
-add_library(msis00 nrlmsise00.f)
+add_library(msis00 nrlmsise00.f msise00_data.f)
 target_compile_options(msis00 PRIVATE ${_glow_old})
 target_include_directories(msis00
   PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include

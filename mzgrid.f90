@@ -24,7 +24,7 @@
 !         f107p  F107. index of previous day
 !         ap     Ap index daily value
 !         iri90_dir  Directory containing IRI input files (set in namelist inputs)
-          
+
 ! Outputs:
 !         z      Geographic altitude (km)
 !         zo     O number density, cm-3
@@ -42,7 +42,9 @@
 
 subroutine mzgrid (jmax,nex,idate,ut,glat,glong,stl,f107a,f107,f107p,ap,iri90_dir, &
                    z,zo,zo2,zn2,zns,znd,zno,ztn,zun,zvn,ze,zti,zte,zxden)
+
   use, intrinsic :: iso_fortran_env, only : stderr=>error_unit
+  use msise00_glow, only : tselec, gtd7
 
   implicit none
 
@@ -53,7 +55,7 @@ subroutine mzgrid (jmax,nex,idate,ut,glat,glong,stl,f107a,f107,f107p,ap,iri90_di
        zno(jmax),ztn(jmax),zti(jmax),zte(jmax),zun(jmax),zvn(jmax),ze(jmax),zxden(nex,jmax)
 
   integer :: j,ijf,jmag,iday,mmdd
-  real :: rz12, d(8), t(2), sw(25), oarr(30)
+  real :: rz12, d(8), t(2), sw(25), oarr(30), ap7(7)
   logical :: jf(12)
   real,allocatable :: outf(:,:)              ! iri output (11,jmax)
   data sw/25*1./
@@ -70,7 +72,7 @@ subroutine mzgrid (jmax,nex,idate,ut,glat,glong,stl,f107a,f107,f107p,ap,iri90_di
 !
   z = (/  80.,  81.,  82.,  83.,  84.,  85.,  86.,  87.,  88.,  89., &
           90.,  91.,  92.,  93.,  94.,  95.,  96.,  97.,  98.,  99., &
-         100., 101., 102., 103., 104., 105., 106., 107., 108., 109., &    
+         100., 101., 102., 103., 104., 105., 106., 107., 108., 109., &
          110.,111.5, 113.,114.5, 116., 118., 120., 122., 124., 126., &
          128., 130., 132., 134., 137., 140., 144., 148., 153., 158., &
          164., 170., 176., 183., 190., 197., 205., 213., 221., 229., &
@@ -84,8 +86,10 @@ subroutine mzgrid (jmax,nex,idate,ut,glat,glong,stl,f107a,f107,f107p,ap,iri90_di
 !
         call tselec(sw)
 
+        ap7 = ap
+
         do j=1,jmax ! levels
-          call gtd7(idate,ut,z(j),glat,glong,stl,f107a,f107p,ap,48,d,t)
+          call gtd7(idate,ut,z(j),glat,glong,stl,f107a,f107p,ap7,48,d,t)
           zo(j) = d(2)
           zn2(j) = d(3)
           zo2(j) = d(4)
