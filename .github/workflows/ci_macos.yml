@@ -18,7 +18,9 @@ jobs:
     - run: cmake -B build
       env:
         FC: gfortran-10
-    - run: cmake --build build
+
+    - run: cmake --build build --parallel
+
     - run: ctest --output-on-failure
       working-directory: build
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.13)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Debug or Release" FORCE)
@@ -58,9 +58,7 @@ endif(BUILD_TESTING)
 
 # --- install
 
-if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-include(${CMAKE_CURRENT_SOURCE_DIR}/install.cmake)
-endif()
+include(install.cmake)
 
 # --- package
 
