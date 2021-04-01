@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13...3.20)
 
 project(glow
   LANGUAGES Fortran
-  VERSION 0.981.0.5
+  VERSION 0.981.0.6
   DESCRIPTION "NCAR GLOW ionospheric model"
   HOMEPAGE_URL https://github.com/gemini3d/glow)
 
@@ -64,6 +64,14 @@ install(TARGETS glow msis00
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/
   DESTINATION include
   FILES_MATCHING PATTERN "*.mod")
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data/
+  DESTINATION share/data/${PROJECT_NAME}
+  FILES_MATCHING PATTERN "*.dat")
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data/iri90/
+  DESTINATION share/data/${PROJECT_NAME}/iri90
+  FILES_MATCHING PATTERN "*.asc")
 
 # --- tests
 
