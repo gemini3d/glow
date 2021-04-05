@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.13...3.20)
 
+file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/VERSION PROJECT_VERSION
+  REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 16 LENGTH_MAXIMUM 16 LIMIT_COUNT 1)
+
 project(glow
   LANGUAGES Fortran
-  VERSION 0.981.0.6
+  VERSION ${PROJECT_VERSION}
   DESCRIPTION "NCAR GLOW ionospheric model"
   HOMEPAGE_URL https://github.com/gemini3d/glow)
 
@@ -41,8 +44,9 @@ add_library(glow ${cglow_src} ${snoem_src} ${utils_src})
 target_compile_options(glow PRIVATE ${_glow_old})
 target_link_libraries(glow PRIVATE msis00)
 target_compile_definitions(glow INTERFACE
+  # must have trailing / on each of these!
   $<BUILD_INTERFACE:DATADIR="${CMAKE_CURRENT_SOURCE_DIR}/data/">
-  $<INSTALL_INTERFACE:DATADIR="data/">)
+  $<INSTALL_INTERFACE:DATADIR="${CMAKE_INSTALL_PREFIX}/share/data/${PROJECT_NAME}/">)
 target_include_directories(glow
   PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
   INTERFACE
