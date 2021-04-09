@@ -1,6 +1,10 @@
       module msise00_glow
 C     module to avoid link conflicts
-      use msise00_data_glow
+      use, intrinsic :: iso_fortran_env, only : stderr=>error_unit
+      use msise00_data_glow, only : parm7, ptm, pdm, pavgm, imr
+
+      private
+      public :: gtd7, tselec, meters
 
       contains
 
@@ -10,7 +14,7 @@ C     NRLMSISE-00
 C     -----------
 C        Neutral Atmosphere Empirical Model from the surface to lower
 C        exosphere
-C                   -- Quick Fixes for gfortran compatibility, SCS, 2017
+C
 C        NEW FEATURES:
 C          *Extensive satellite drag database used in model generation
 C          *Revised O2 (and O) in lower thermosphere
@@ -137,39 +141,31 @@ C              22 - ALL TN3 VAR           23 - TURBO SCALE HEIGHT VAR
 C
 C        To get current values of SW: CALL TRETRV(SW)
 C
-      DIMENSION D(9),T(2),AP(7),DS(9),TS(2)
-      DIMENSION ZN3(5),ZN2(4),SV(25)
+      Real,Intent(OUT):: D(9), T(2)
+      Real,Intent(In) :: SEC,ALT,GLAT,GLONG,STL,F107A,F107,AP(7)
+      Integer,Intent(IN)::IYD,MASS
+
+      Real DS(9),TS(2)
+      real ZN3(5),ZN2(4),SV(25)
+
       COMMON/GTS3C/TLB,S,DB04,DB16,DB28,DB32,DB40,DB48,DB01,ZA,T0,Z0
      & ,G0,RL,DD,DB14,TR12
       COMMON/MESO7/TN1(5),TN2(4),TN3(5),TGN1(2),TGN2(2),TGN3(2)
-      COMMON/LOWER7/PTM(10),PDM(10,8)
+
       COMMON/PARM7/PT(150),PD(150,9),PS(150),PDL(25,2),PTL(100,4),
      $ PMA(100,10),SAM(100)
-      COMMON/DATIM7/ISD(3),IST(2),NAM(2)
-      COMMON/DATIME/ISDATE(3),ISTIME(2),NAME(2)
+
       COMMON/CSW/SW(25),ISW,SWC(25)
-      COMMON/MAVG7/PAVGM(10)
       COMMON/DMIX/DM04,DM16,DM28,DM32,DM40,DM01,DM14
       COMMON/PARMB/GSURF,RE
       COMMON/METSEL/IMR
       SAVE
-C      EXTERNAL GTD7BK
+
       DATA MN3/5/,ZN3/32.5,20.,15.,10.,0./
       DATA MN2/4/,ZN2/72.5,55.,45.,32.5/
       DATA ZMIX/62.5/,ALAST/99999./,MSSL/-999/
       DATA SV/25*1./
-C     write(6,*) 'inside gtd7'
-c     write(6,*) IYD,SEC,ALT,GLAT,GLONG,STL,F107A,F107,AP,MASS,D,T
-C     write(6,*) f107a,f107
       IF(ISW.NE.64999) CALL TSELEC(SV)
-C      Put identification data into common/datime/
-      DO 1 I=1,3
-        ISDATE(I)=ISD(I)
-    1 CONTINUE
-      DO 2 I=1,2
-        ISTIME(I)=IST(I)
-        NAME(I)=NAM(I)
-    2 CONTINUE
 C
 C        Test for changed input
       V1=VTST7(IYD,SEC,GLAT,GLONG,STL,F107A,F107,AP,1)
@@ -181,7 +177,7 @@ C
       XMM=PDM(5,3)
 C
 C       THERMOSPHERE/MESOSPHERE (above ZN2(1))
-      ALTT=AMAX1(ALT,ZN2(1))
+      ALTT=MAX(ALT,ZN2(1))
       MSS=MASS
 C       Only calculate N2 in thermosphere if alt in mixed region
       IF(ALT.LT.ZMIX.AND.MASS.GT.0) MSS=28
@@ -218,7 +214,9 @@ C         Only calculate nodes if input changed
      $  *TN2(4)*TN2(4)/(PMA(1,3)*PAVGM(3))**2
         TN3(1)=TN2(4)
        ENDIF
-       IF(ALT.GE.ZN3(1)) GOTO 6
+C Including ZN3(1) in the jump condition creates a model coverage gap at that exact altitude
+C       IF(ALT.GE.ZN3(1)) GOTO 6
+       IF(ALT.GT.ZN3(1)) GOTO 6
 C
 C       LOWER STRATOSPHERE AND TROPOSPHERE [below ZN3(1)]
 C         Temperature at nodes and gradients at end nodes
@@ -281,7 +279,7 @@ C
    10 CONTINUE
       GOTO 90
    50 CONTINUE
-      DD=DENSM(ALT,1.,0.,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,TGN2) ! 0. SCS 2017
+      DD=DENSM(ALT,1.,0.,TZ,MN3,ZN3,TN3,TGN3,MN2,ZN2,TN2,TGN2)
       T(2)=TZ
    90 CONTINUE
       ALAST=ALT
@@ -361,8 +359,7 @@ C
      &       D(7)+14.*D(8)+16.*D(9))
          IF(IMR.EQ.1) D(6)=D(6)/1000.
          ENDIF
-      RETURN
-      END
+      END SUBROUTINE GTD7D
 C-----------------------------------------------------------------------
       SUBROUTINE GHP7(IYD,SEC,ALT,GLAT,GLONG,STL,F107A,F107,AP,
      $  D,T,PRESS)
@@ -450,11 +447,11 @@ C         New altitude estimate using scale height
         ENDIF
         GOTO 10
    20 CONTINUE
-      IF(L.EQ.LTEST) WRITE(6,100) PRESS,DIFF
+      IF(L.EQ.LTEST) write(stderr,100) PRESS,DIFF
   100 FORMAT(1X,29HGHP7 NOT CONVERGING FOR PRESS, 1PE12.2,E12.2)
       ALT=Z
-      RETURN
-      END
+
+      END SUBROUTINE GHP7
 C-----------------------------------------------------------------------
       SUBROUTINE GLATF(LAT,GV,REFF)
 C      CALCULATE LATITUDE VARIABLE GRAVITY (GV) AND EFFECTIVE
@@ -465,8 +462,7 @@ C      RADIUS (REFF)
       C2 = COS(2.*DGTR*LAT)
       GV = 980.616*(1.-.0026373*C2)
       REFF = 2.*GV/(3.085462E-6 + 2.27E-9*C2)*1.E-5
-      RETURN
-      END
+      END SUBROUTINE GLATF
 C-----------------------------------------------------------------------
       FUNCTION VTST7(IYD,SEC,GLAT,GLONG,STL,F107A,F107,AP,IC)
 C       Test if geophysical variables or switches changed and save
@@ -511,8 +507,7 @@ C       Return 0 if unchanged and 1 if changed
         SWCL(I,IC)=SWC(I)
    16 CONTINUE
    20 CONTINUE
-      RETURN
-      END
+      END FUNCTION VTST7
 C-----------------------------------------------------------------------
       SUBROUTINE GTS7(IYD,SEC,ALT,GLAT,GLONG,STL,F107A,F107,AP,MASS,D,T)
 C
@@ -582,8 +577,8 @@ C
       COMMON/GTS3C/TLB,S,DB04,DB16,DB28,DB32,DB40,DB48,DB01,ZA,T0,Z0
      & ,G0,RL,DD,DB14,TR12
       COMMON/MESO7/TN1(5),TN2(4),TN3(5),TGN1(2),TGN2(2),TGN3(2)
-      DIMENSION D(9),T(2),MT(11),AP(1),ALTL(8)
-      COMMON/LOWER7/PTM(10),PDM(10,8)
+      DIMENSION D(9),T(2),MT(11),AP(7),ALTL(8)
+
       COMMON/PARM7/PT(150),PD(150,9),PS(150),PDL(25,2),PTL(100,4),
      $ PMA(100,10),SAM(100)
       COMMON/CSW/SW(25),ISW,SWC(25)
@@ -946,16 +941,18 @@ C       ADJUST DENSITIES FROM CGS TO KGM
       ALAST=ALT
       RETURN
   100 FORMAT(1X,'MASS', I5, '  NOT VALID')
-      END
+      END Subroutine GTS7
 C-----------------------------------------------------------------------
       SUBROUTINE METERS(METER)
+      implicit none (external)
 C      Convert outputs to Kg & Meters if METER true
-      LOGICAL METER
+      logical,Intent(In) :: METER
+      Integer IMR
       COMMON/METSEL/IMR
       SAVE
       IMR=0
       IF(METER) IMR=1
-      END
+      END SUBROUTINE METERS
 C-----------------------------------------------------------------------
       FUNCTION SCALH(ALT,XM,TEMP)
 C      Calculate scale height (km)
@@ -964,14 +961,13 @@ C      Calculate scale height (km)
       DATA RGAS/831.4/
       G=GSURF/(1.+ALT/RE)**2
       SCALH=RGAS*TEMP/(G*XM)
-      RETURN
-      END
+      END FUNCTION SCALH
 C-----------------------------------------------------------------------
       FUNCTION GLOBE7(YRD,SEC,LAT,LONG,TLOC,F107A,F107,AP,P)
 C       CALCULATE G(L) FUNCTION
 C       Upper Thermosphere Parameters
       REAL LAT, LONG
-      DIMENSION P(200),SV(25),AP(7)
+      DIMENSION P(150),SV(25),AP(7)
       COMMON/TTEST/TINF,GB,ROUT,T(15)
       COMMON/CSW/SW(25),ISW,SWC(25)
       COMMON/LPOLY/PLG(9,4),CTLOC,STLOC,C2TLOC,S2TLOC,C3TLOC,S3TLOC,
@@ -1199,7 +1195,7 @@ C        FOR ON, OR 2. FOR MAIN EFFECTS OFF BUT CROSS TERMS ON
 C
 C        To get current values of SW: CALL TRETRV(SW)
 C
-      DIMENSION SV(1),SAV(25),SVV(1)
+      DIMENSION SV(25),SAV(25),SVV(25)
       COMMON/CSW/SW(25),ISW,SWC(25)
       SAVE
       DO 100 I = 1,25
@@ -1215,10 +1211,7 @@ C
       RETURN
       ENTRY TRETRV(SVV)
       DO 200 I=1,25
-         SVV(I)=SAV(I)
-C        SAV(I)=1.
-C        SWC(I)=1.
-C        SW(I)=1.
+        SVV(I)=SAV(I)
   200 CONTINUE
       END
 C-----------------------------------------------------------------------
@@ -1228,16 +1221,16 @@ C      VERSION OF GLOBE FOR LOWER ATMOSPHERE 10/26/99
       COMMON/LPOLY/PLG(9,4),CTLOC,STLOC,C2TLOC,S2TLOC,C3TLOC,S3TLOC,
      $ IYR,DAY,DF,DFA,APD,APDF,APT(4),LONG
       COMMON/CSW/SW(25),ISW,SWC(25)
-      DIMENSION P(200),T(14)
+      DIMENSION P(*),T(14)
       SAVE
       DATA DR/1.72142E-2/,DGTR/1.74533E-2/,PSET/2./
       DATA DAYL/-1./,P32,P18,P14,P39/4*-1000./
 C       CONFIRM PARAMETER SET
       IF(P(100).EQ.0) P(100)=PSET
       IF(P(100).NE.PSET) THEN
-        WRITE(6,900) PSET,P(100)
+        write(stderr,900) PSET,P(100)
   900   FORMAT(1X,'WRONG PARAMETER SET FOR GLOB7S',3F10.1)
-        STOP
+        error stop
       ENDIF
       DO 10 J=1,14
         T(J)=0.
@@ -1547,7 +1540,7 @@ C        Y: OUTPUT VALUE
         GOTO 1
       ENDIF
       H=XA(KHI)-XA(KLO)
-      IF(H.EQ.0) WRITE(6,*) 'BAD XA INPUT TO SPLINT'
+      IF(H.EQ.0) write(stderr,*) 'BAD XA INPUT TO SPLINT'
       A=(XA(KHI)-X)/H
       B=(X-XA(KLO))/H
       Y=A*YA(KLO)+B*YA(KHI)+
@@ -1599,7 +1592,8 @@ C          DNET - combined density
       SAVE
       A=ZHM/(XMM-XM)
       IF(DM.GT.0.AND.DD.GT.0) GOTO 5
-        WRITE(6,*) 'DNET LOG ERROR',DM,DD,XM
+        WRITE(stderr,*) 'DNET LOG ERROR',DM,DD,XM
+        error stop
         IF(DD.EQ.0.AND.DM.EQ.0) DD=1.
         IF(DM.EQ.0) GOTO 10
         IF(DD.EQ.0) GOTO 20

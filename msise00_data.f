@@ -1,5 +1,7 @@
       module msise00_data_glow
 
+      private
+      public :: parm7, ptm, pdm, pavgm, imr
 
 C          MSISE-00 01-FEB-02
       COMMON/PARM7/PT1(50),PT2(50),PT3(50),PA1(50),PA2(50),PA3(50),
@@ -13,13 +15,11 @@ C          MSISE-00 01-FEB-02
      $ PS1(50),PS2(50),PU1(50),PU2(50),PV1(50),PV2(50),
      $ PW1(50),PW2(50),PX1(50),PX2(50),PY1(50),PY2(50),
      $ PZ1(50),PZ2(50),PAA1(50),PAA2(50)
-      COMMON/LOWER7/PTM(10),PDM(10,8)
-      COMMON/MAVG7/PAVGM(10)
-      COMMON/DATIM7/ISDATE(3),ISTIME(2),NAME(2)
-      COMMON/METSEL/IMR
-      DATA IMR/0/
-C     DATA ISDATE/'01-F','EB-0','2   '/,ISTIME/'15:4','9:27'/ ! cout, SCS, 2017
-C     DATA NAME/'MSIS','E-00'/                                ! cout, SCS, 2017
+      real :: PTM(10),PDM(10,8)
+      real :: PAVGM(10)
+
+      integer :: IMR = 0
+
 C         TEMPERATURE
       DATA PT1/
      *  9.86573E-01, 1.62228E-02, 1.55270E-02,-1.04323E-01,-3.75801E-03,
