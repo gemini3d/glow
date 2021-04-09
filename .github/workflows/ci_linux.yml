@@ -1,5 +1,8 @@
 name: ci_linux
 
+env:
+  CTEST_PARALLEL_LEVEL: 2
+
 on:
   push:
     paths:
@@ -11,22 +14,14 @@ on:
 
 jobs:
 
-  cmake313:
+  cmake:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
 
-    - name: Get CMake 3.13
-      run: |
-        curl -L -O https://github.com/Kitware/CMake/releases/download/v3.13.4/cmake-3.13.4-Linux-x86_64.tar.gz
-        tar -xf cmake-3.13.4-Linux-x86_64.tar.gz
-        echo "${GITHUB_WORKSPACE}/cmake-3.13.4-Linux-x86_64/bin" >> $GITHUB_PATH
-
-
-    - run: cmake -B build
+    - run: cmake --preset make
     - run: cmake --build build --parallel
-    - run: ctest --output-on-failure
-      working-directory: build
+    - run: ctest --preset default
 
 
   meson:

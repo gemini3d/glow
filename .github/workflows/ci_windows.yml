@@ -16,11 +16,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - run: cmake --preset=makewin
+    - run: cmake --preset makewin
     - run: cmake --build build --parallel
-
-    - run: ctest --output-on-failure
-      working-directory: build
+    - run: ctest --preset default
 
 
   meson:
