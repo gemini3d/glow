@@ -55,7 +55,7 @@ subroutine mzgrid (jmax,nex,idate,ut,glat,glong,stl,f107a,f107,f107p,ap,iri90_di
        zno(jmax),ztn(jmax),zti(jmax),zte(jmax),zun(jmax),zvn(jmax),ze(jmax),zxden(nex,jmax)
 
   integer :: j,ijf,jmag,iday,mmdd
-  real :: rz12, d(8), t(2), sw(25), oarr(30), ap7(7)
+  real :: rz12, d(9), t(2), sw(25), oarr(30), ap7(7)
   logical :: jf(12)
   real,allocatable :: outf(:,:)              ! iri output (11,jmax)
   data sw/25*1./

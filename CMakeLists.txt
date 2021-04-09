@@ -12,17 +12,7 @@ project(glow
 include(CTest)
 
 if(CMAKE_Fortran_COMPILER_ID STREQUAL GNU)
-  set(_glow_old -std=legacy -Wno-pedantic -w -fno-implicit-none -Wno-error=array-bounds -fcheck=no-all)
-elseif(CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
-  if(WIN32)
-    set(_glow_old /nostand /nowarn /nocheck)
-  else()
-    set(_glow_old -nostand -nowarn -nocheck)
-  endif()
-elseif(CMAKE_Fortran_COMPILER_ID STREQUAL Cray)
-  set(_glow_old -m 4)
-else()  # Flang, Nvidia, NAG, etc.
-  set(_glow_old -w)
+  set(_glow_old -std=legacy)
 endif()
 
 set(cglow_src glow.f90 cglow.f90 fieldm.f solzen.f90 ssflux.f90 rcolum.f90 qback.f90 etrans.f90 exsect.f gchem.f90 bands.f90 ephoto.f90 egrid.f90 maxt.f90)
