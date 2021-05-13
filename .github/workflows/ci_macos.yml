@@ -1,6 +1,8 @@
 name: ci_macos
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1
+  CC: gcc-10
+  FC: gfortran-10
 
 on:
   push:
@@ -17,7 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - run: cmake --preset makegcc10
+    - run: cmake --preset make
     - run: cmake --build build --parallel
     - run: ctest --preset default
 

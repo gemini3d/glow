@@ -14,24 +14,9 @@
   "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}
 },
 {
-  "name": "gcc10", "inherits": "default",
-  "displayName": "GCC-10",
-  "description": "specify GCC-10 -- helpful for MacOS Homebrew to avoid Clang /usr/bin/gcc",
-  "environment": {
-    "CC": "gcc-10",
-    "CXX": "g++-10",
-    "FC": "gfortran-10"
-  }
-},
-{
   "name": "make", "inherits": "default",
   "displayName": "build with GNU Make",
   "generator": "Unix Makefiles"
-},
-{
-  "name": "makegcc10", "inherits": ["make", "gcc10"],
-  "displayName": "build with GNU Make and GCC",
-  "description": "build with GNU Make and GCC -- useful for MacOS"
 },
 {
   "name": "makewin", "inherits": "default",
@@ -41,7 +26,6 @@
 {
   "name": "intel", "inherits": "default",
   "displayName": "Intel Classic compiler: Linux/MacOS",
-  "binaryDir": "${sourceDir}/build-intel",
   "environment": {
     "CC": "icc",
     "CXX": "icpc",
@@ -70,10 +54,6 @@
   {
     "name": "default",
     "configurePreset": "default"
-  },
-  {
-    "name": "intel",
-    "configurePreset": "intel"
   }
 ],
 "testPresets": [
@@ -87,10 +67,6 @@
   "execution": {
     "noTestsAction": "error",
     "stopOnFailure": false}
-},
-{
-  "name": "intel", "inherits": "default",
-  "configurePreset": "intel"
 }
 ]
 }
