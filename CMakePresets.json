@@ -1,51 +1,17 @@
 {
-  "version": 2,
-  "cmakeMinimumRequired": {
-    "major": 3,
-    "minor": 20,
-    "patch": 0
-},
+  "version": 3,
 
 "configurePresets": [
 {
   "name": "default",
   "binaryDir": "${sourceDir}/build",
-  "generator": "Ninja",
   "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}
 },
 {
-  "name": "make", "inherits": "default",
-  "displayName": "build with GNU Make",
-  "generator": "Unix Makefiles"
-},
-{
-  "name": "makewin", "inherits": "default",
-  "displayName": "build with GNU Make: Windows",
-  "generator": "MinGW Makefiles"
-},
-{
   "name": "intel", "inherits": "default",
-  "displayName": "Intel Classic compiler: Linux/MacOS",
-  "environment": {
-    "CC": "icc",
-    "CXX": "icpc",
-    "FC": "ifort"
-  }
-},
-{
-  "name": "intelwin", "inherits": "intel",
-  "displayName": "Intel Classic compiler: Windows",
-  "environment": {
-    "CC": "icl",
-    "CXX": "icl"
-  }
-},
-{
-  "name": "intelnext", "inherits": "intel",
   "displayName": "Intel oneAPI LLVM",
   "environment": {
     "CC": "icx",
-    "CXX": "icx",
     "FC": "ifx"
   }
 }
@@ -66,7 +32,8 @@
   },
   "execution": {
     "noTestsAction": "error",
-    "stopOnFailure": false}
+    "stopOnFailure": false
+  }
 }
 ]
 }
