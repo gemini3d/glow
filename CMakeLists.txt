@@ -48,8 +48,7 @@ set_target_properties(glow PROPERTIES
 add_library(glow::glow INTERFACE IMPORTED GLOBAL)
 target_link_libraries(glow::glow INTERFACE glow)
 
-install(TARGETS glow msis00
-  EXPORT ${PROJECT_NAME}Targets)
+install(TARGETS glow msis00 EXPORT ${PROJECT_NAME}Targets)
 
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/
   TYPE INCLUDE
