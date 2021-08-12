@@ -1209,7 +1209,7 @@ C
   100 CONTINUE
       ISW=64999
       RETURN
-      ENTRY TRETRV(SVV)
+!      ENTRY TRETRV(SVV)  ! Intel oneAPI LLVM compatibility
       DO 200 I=1,25
         SVV(I)=SAV(I)
   200 CONTINUE
