@@ -2,6 +2,7 @@ name: ci_linux
 
 env:
   CTEST_PARALLEL_LEVEL: 2
+  CMAKE_BUILD_TYPE: Release
 
 on:
   push:
