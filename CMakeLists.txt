@@ -14,9 +14,7 @@ include(CTest)
 
 include(cmake/options.cmake)
 
-if(CMAKE_Fortran_COMPILER_ID STREQUAL GNU)
-  set(_glow_old -std=legacy)
-endif()
+set(_glow_old $<$<Fortran_COMPILER_ID:GNU>:-std=legacy>)
 
 set(cglow_src glow.f90 cglow.f90 fieldm.f solzen.f90 ssflux.f90 rcolum.f90 qback.f90 etrans.f90 exsect.f gchem.f90 bands.f90 ephoto.f90 egrid.f90 maxt.f90)
 set(snoem_src snoem.f90 snoemint.f90 geomag.f90)
