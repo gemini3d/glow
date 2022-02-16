@@ -12,6 +12,8 @@ HOMEPAGE_URL https://github.com/gemini3d/glow
 
 include(CTest)
 
+include(cmake/options.cmake)
+
 if(CMAKE_Fortran_COMPILER_ID STREQUAL GNU)
   set(_glow_old -std=legacy)
 endif()
