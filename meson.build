@@ -1,6 +1,6 @@
 project('GLOW', 'fortran',
   version : '0.981',
-  meson_version : '>= 0.51.2',
+  meson_version : '>= 0.54',
   default_options : ['default_library=static', 'buildtype=release', 'warning_level=0', 'fortran_std=legacy'])
 
 fc = meson.get_compiler('fortran')
@@ -14,23 +14,27 @@ utils_src = files('mzgrid.f90', 'conduct.f90', 'iri90.f')
 
 data_dir = meson.current_source_dir() / 'data'
 
-# this avoids duplicated symbol linking error on MacOS
-if not meson.is_subproject()
-  utils_src += files('nrlmsise00.f')
-endif
+msise00 = library('msise00',
+sources: ['nrlmsise00.f', 'msise00_data.f'],
+fortran_args : fargs_old
+)
 
 cglow = library('glow',
-  sources: [cglow_src, snoem_src, utils_src],
-  fortran_args : fargs_old)
+sources: [cglow_src, snoem_src, utils_src],
+link_with: msise00,
+fortran_args : fargs_old
+)
 
 if meson.is_subproject()
   subdir_done()
 endif
 
 glow_basic_exe = executable('glowbasic', 'glowbasic.f90',
-  link_with: cglow)
+link_with: cglow
+)
 
 test('glow_basic', glow_basic_exe,
-  args: ['basic.nml'],
-  workdir: meson.current_source_dir(),
-  timeout: 10)
+args: ['basic.nml'],
+workdir: meson.current_source_dir(),
+timeout: 10
+)

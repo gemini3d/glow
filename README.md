@@ -1,10 +1,7 @@
 
 # GLOW
 
-[![Actions Status](https://github.com/gemini3d/GLOW/workflows/ci_linux/badge.svg)](https://github.com/gemini3d/GLOW/actions)
-[![Actions Status](https://github.com/gemini3d/GLOW/workflows/ci_macos/badge.svg)](https://github.com/gemini3d/GLOW/actions)
-[![Actions Status](https://github.com/gemini3d/GLOW/workflows/ci_windows/badge.svg)](https://github.com/gemini3d/GLOW/actions)
-
+[![Actions Status](https://github.com/gemini3d/GLOW/workflows/ci/badge.svg)](https://github.com/gemini3d/GLOW/actions)
 
 The GLobal airglOW Model
 
