@@ -3,6 +3,7 @@ name: ci
 env:
   CTEST_PARALLEL_LEVEL: 2
   CMAKE_BUILD_TYPE: Release
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
 
 on:
   push:
@@ -15,31 +16,54 @@ on:
 
 jobs:
 
-  cmake:
+  cmake_unix:
     strategy:
       matrix:
         shared: [true, false]
         image: [
-          {os: ubuntu-latest, fc: gfortran, gen: Unix Makefiles},
-          {os: macos-latest, fc: gfortran-11, gen: Unix Makefiles},
-          {os: windows-latest, fc: gfortran, gen: MinGW Makefiles}
+          {os: ubuntu-latest, fc: gfortran},
+          {os: macos-latest, fc: gfortran-11}
         ]
 
     runs-on: ${{ matrix.image.os }}
     env:
-      CMAKE_GENERATOR: ${{ matrix.image.gen }}
       FC: ${{ matrix.image.fc }}
 
     steps:
     - uses: actions/checkout@v2
 
     - run: cmake -B build -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }}
-
-
     - run: cmake --build build
-
     - run: ctest --test-dir build --preset default
 
+
+  msys2:
+    timeout-minutes: 20
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        shared: [true, false]
+
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: >-
+          git
+          mingw-w64-x86_64-cmake
+          mingw-w64-x86_64-ninja
+          mingw-w64-x86_64-gcc-fortran
+    # cmake install needed because of default to msys2 shell
+
+    - uses: actions/checkout@v2
+
+    - run: cmake -B build -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }}
+    - run: cmake --build build
+    - run: ctest --test-dir build --preset default
 
 
   meson:
@@ -50,8 +74,6 @@ jobs:
             fc: gfortran
           - os: macos-latest
             fc: gfortran-11
-          - os: windows-latest
-            fc: gfortran
 
     runs-on: ${{ matrix.os }}
 
