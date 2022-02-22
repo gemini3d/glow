@@ -18,26 +18,23 @@ jobs:
   cmake:
     strategy:
       matrix:
-        include:
-          - os: ubuntu-latest
-            fc: gfortran
-            cmake_gen: "Unix Makefiles"
-          - os: macos-latest
-            fc: gfortran-11
-            cmake_gen: "Unix Makefiles"
-          - os: windows-latest
-            fc: gfortran
-            cmake_gen: "MinGW Makefiles"
+        shared: [true, false]
+        image: [
+          {os: ubuntu-latest, fc: gfortran, gen: Unix Makefiles},
+          {os: macos-latest, fc: gfortran-11, gen: Unix Makefiles},
+          {os: windows-latest, fc: gfortran, gen: MinGW Makefiles}
+        ]
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.image.os }}
+    env:
+      CMAKE_GENERATOR: ${{ matrix.image.gen }}
+      FC: ${{ matrix.image.fc }}
 
     steps:
     - uses: actions/checkout@v2
 
-    - run: cmake -B build
-      env:
-        CMAKE_GENERATOR: ${{ matrix.cmake_gen }}
-        FC: ${{ matrix.fc }}
+    - run: cmake -B build -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }}
+
 
     - run: cmake --build build
 

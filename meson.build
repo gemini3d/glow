@@ -1,7 +1,7 @@
 project('GLOW', 'fortran',
   version : '0.981',
   meson_version : '>= 0.54',
-  default_options : ['default_library=static', 'buildtype=release', 'warning_level=0', 'fortran_std=legacy'])
+  default_options : ['buildtype=release', 'warning_level=0', 'fortran_std=legacy'])
 
 fc = meson.get_compiler('fortran')
 fargs_old = [fc.first_supported_argument(['-w', '-nowarn', '/nowarn']),
