@@ -1,23 +1,7 @@
 include(ExternalProject)
 
-if(NOT glow_external)
-  find_package(glow CONFIG)
-
-  if(glow_FOUND)
-    message(STATUS "GLOW found: ${glow_DIR}")
-    return()
-  endif()
-endif()
-
-set(glow_external true CACHE BOOL "build GLOW")
-
-
 if(BUILD_SHARED_LIBS)
   if(WIN32)
-    set(GLOW_IMPLIB
-    ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}glow${CMAKE_SHARED_LIBRARY_SUFFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
-    ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}msis00${CMAKE_SHARED_LIBRARY_SUFFIX}${CMAKE_STATIC_LIBRARY_SUFFIX}
-    )
     set(GLOW_LIBRARIES
     ${CMAKE_INSTALL_PREFIX}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}glow${CMAKE_SHARED_LIBRARY_SUFFIX}
     ${CMAKE_INSTALL_PREFIX}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}msis00${CMAKE_SHARED_LIBRARY_SUFFIX}
@@ -63,7 +47,6 @@ target_link_libraries(glow::glow INTERFACE ${GLOW_LIBRARIES})
 target_include_directories(glow::glow INTERFACE ${GLOW_INCLUDE_DIRS})
 target_compile_definitions(glow::glow INTERFACE DATADIR="${CMAKE_INSTALL_PREFIX}/share/data/glow/")
 # DATADIR comes from glow project BUILD_INTERFACE COMPILE_DEFINITIONS
-# this does not seem to work with get_target_property()
-# so preprocess instead of configure_file()
+
 
 add_dependencies(glow::glow GLOW)
