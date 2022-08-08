@@ -1,10 +1,13 @@
 name: ci
 
+env:
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+
 on:
   push:
     paths:
-      - "**/*.f"
-      - "**/*.f90"
+      - "**.f"
+      - "**.f90"
       - "**/CMakeLists.txt"
       - "**.cmake"
       - ".github/workflows/ci.yml"
@@ -15,18 +18,17 @@ jobs:
     strategy:
       matrix:
         shared: [true, false]
-        image: [
-          {os: ubuntu-latest, fc: gfortran},
-          {os: macos-latest, fc: gfortran-11}
-        ]
+        os: [ubuntu-latest, macos-latest]
 
-    runs-on: ${{ matrix.image.os }}
-    env:
-      FC: ${{ matrix.image.fc }}
-      HOMEBREW_NO_INSTALL_CLEANUP: 1
+    runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+
+    - name: install gcc
+      if: runner.os == 'macOS'
+      run: brew reinstall gcc
+
+    - uses: actions/checkout@v3
 
     - run: cmake -B build -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }}
     - run: cmake --build build
@@ -54,36 +56,8 @@ jobs:
     - name: Put MSYS2_MinGW64 on PATH
       run: echo "${{ runner.temp }}/msys64/mingw64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - run: cmake -B build -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }}
     - run: cmake --build build
     - run: ctest --test-dir build --preset default
-
-
-  meson:
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            fc: gfortran
-          - os: macos-latest
-            fc: gfortran-11
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
-    - run: pip install meson ninja
-
-    - run: meson setup build
-      env:
-        FC: ${{ matrix.fc }}
-
-    - run: meson compile -C build
-
-    - run: meson test -C build -v
