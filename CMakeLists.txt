@@ -8,7 +8,7 @@ LANGUAGES Fortran
 VERSION ${PROJECT_VERSION}
 )
 
-include(CTest)
+enable_testing()
 
 include(cmake/options.cmake)
 include(cmake/compilers.cmake)
