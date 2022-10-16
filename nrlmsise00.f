@@ -944,7 +944,7 @@ C       ADJUST DENSITIES FROM CGS TO KGM
       END Subroutine GTS7
 C-----------------------------------------------------------------------
       SUBROUTINE METERS(METER)
-      implicit none (external)
+      implicit none
 C      Convert outputs to Kg & Meters if METER true
       logical,Intent(In) :: METER
       Integer IMR
