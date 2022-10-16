@@ -1,11 +1,8 @@
 cmake_minimum_required(VERSION 3.11...3.25)
 
-file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/VERSION PROJECT_VERSION
-  REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 16 LENGTH_MAXIMUM 16 LIMIT_COUNT 1)
-
 project(glow
 LANGUAGES Fortran
-VERSION ${PROJECT_VERSION}
+VERSION 0.981.0.15
 )
 
 enable_testing()
@@ -71,12 +68,10 @@ if(BUILD_TESTING)
 add_executable(glowbasic glowbasic.f90)
 target_link_libraries(glowbasic PRIVATE glow)
 add_test(NAME glow_basic
-COMMAND $<TARGET_FILE:glowbasic> basic.nml
+COMMAND glowbasic basic.nml
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 endif(BUILD_TESTING)
-
-# --- install
 
 include(cmake/install.cmake)
