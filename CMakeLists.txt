@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.11...3.25)
 
 project(glow
 LANGUAGES Fortran
-VERSION 0.981.0.15
+VERSION 0.981.0.16
 )
 
 enable_testing()
@@ -20,7 +20,6 @@ target_include_directories(msis00 PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 $<INSTALL_INTERFACE:include>
 )
-set_property(TARGET msis00 PROPERTY Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 add_library(glow ${cglow_src} ${snoem_src} ${utils_src})
 target_compile_options(glow PRIVATE ${glow_fflags})
@@ -34,7 +33,7 @@ target_include_directories(glow PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 $<INSTALL_INTERFACE:include>
 )
-set_property(TARGET glow PROPERTY Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
+set_property(TARGET msis00 glow PROPERTY Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 add_library(glow::glow INTERFACE IMPORTED GLOBAL)
 target_link_libraries(glow::glow INTERFACE glow)
