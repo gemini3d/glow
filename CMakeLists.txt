@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11...3.25)
+cmake_minimum_required(VERSION 3.14...3.25)
 
 project(glow
 LANGUAGES Fortran
@@ -18,7 +18,7 @@ add_library(msis00 nrlmsise00.f msise00_data.f)
 target_compile_options(msis00 PRIVATE ${glow_fflags})
 target_include_directories(msis00 PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-$<INSTALL_INTERFACE:include>
+$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 add_library(glow ${cglow_src} ${snoem_src} ${utils_src})
@@ -31,22 +31,17 @@ $<INSTALL_INTERFACE:DATADIR="${CMAKE_INSTALL_PREFIX}/share/data/${PROJECT_NAME}/
 )
 target_include_directories(glow PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-$<INSTALL_INTERFACE:include>
+$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 set_property(TARGET msis00 glow PROPERTY Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 add_library(glow::glow INTERFACE IMPORTED GLOBAL)
 target_link_libraries(glow::glow INTERFACE glow)
 
-install(TARGETS glow msis00 EXPORT ${PROJECT_NAME}-targets
-LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
+install(TARGETS glow msis00 EXPORT ${PROJECT_NAME}-targets)
 
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/
-DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+TYPE INCLUDE
 FILES_MATCHING PATTERN "*.mod"
 )
 

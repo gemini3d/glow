@@ -1,7 +1,7 @@
       module msise00_data_glow
 
       private
-      public :: parm7, ptm, pdm, pavgm, imr
+      public :: ptm, pdm, pavgm, imr
 
 C          MSISE-00 01-FEB-02
       COMMON/PARM7/PT1(50),PT2(50),PT3(50),PA1(50),PA2(50),PA3(50),

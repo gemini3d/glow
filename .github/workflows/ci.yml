@@ -14,37 +14,42 @@ on:
 
 jobs:
 
-  cmake_unix:
+  unix:
     strategy:
       matrix:
         shared: [true, false]
         os: [ubuntu-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
 
     steps:
 
-    - name: install gcc
+    - name: install gfortran
       if: runner.os == 'macOS'
       run: brew reinstall gcc
 
     - uses: actions/checkout@v3
 
-    - run: cmake -B build -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }}
-    - run: cmake --build build
-    - run: ctest --test-dir build --preset default
+    - name: Configure
+      run: cmake --preset default -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }} --install-prefix=${{ runner.temp }}
 
+    - name: Build
+      run: cmake --build --preset default --parallel
 
-  msys2:
-    timeout-minutes: 20
+    - name: Test
+      run: ctest --preset default
+
+    - name: Install
+      run: cmake --install build
+
+  windows:
+    timeout-minutes: 15
     runs-on: windows-latest
-
     env:
       CMAKE_GENERATOR: MinGW Makefiles
 
-    strategy:
-      matrix:
-        shared: [false]
+        # shared always error 135 even on only shared. not a problem on real pc.
 
     steps:
     - uses: msys2/setup-msys2@v2
@@ -58,6 +63,5 @@ jobs:
 
     - uses: actions/checkout@v3
 
-    - run: cmake -B build -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }}
-    - run: cmake --build build
-    - run: ctest --test-dir build --preset default
+    - name: Configure
+      run: cmake --workflow --preset default

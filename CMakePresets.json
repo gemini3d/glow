@@ -1,25 +1,55 @@
 {
-  "version": 3,
+  "version": 6,
 
 "configurePresets": [
 {
-  "name": "phony"
+  "name": "default",
+  "generator": "Ninja",
+  "binaryDir": "${sourceDir}/build",
+  "cacheVariables": {
+    "CMAKE_COMPILE_WARNING_AS_ERROR": true
+  }
 }
+],
+"buildPresets": [
+  {
+    "name": "default",
+    "configurePreset": "default"
+  }
 ],
 "testPresets": [
 {
   "name": "default",
-  "configurePreset": "phony",
+  "configurePreset": "default",
   "output": {
     "outputOnFailure": true,
-    "verbosity": "default"
+    "verbosity": "verbose"
   },
   "execution": {
     "noTestsAction": "error",
     "scheduleRandom": true,
     "stopOnFailure": false,
-    "timeout": 10
+    "timeout": 60
   }
 }
+],
+"workflowPresets": [
+  {
+    "name": "default",
+    "steps": [
+      {
+        "type": "configure",
+        "name": "default"
+      },
+      {
+        "type": "build",
+        "name": "default"
+      },
+      {
+        "type": "test",
+        "name": "default"
+      }
+    ]
+  }
 ]
 }

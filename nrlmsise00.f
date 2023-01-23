@@ -1,7 +1,7 @@
       module msise00_glow
 C     module to avoid link conflicts
       use, intrinsic :: iso_fortran_env, only : stderr=>error_unit
-      use msise00_data_glow, only : parm7, ptm, pdm, pavgm, imr
+      use msise00_data_glow, only : ptm, pdm, pavgm, imr
 
       private
       public :: gtd7, tselec, meters
