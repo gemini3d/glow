@@ -1518,8 +1518,9 @@ C STEP-FUNCTIONS AT THE STEP HEIGHTS XS(M) WITH TRANSITION
 C THICKNESSES ID(M). RPID(H0,H0,N0,....)=N0.
 C ARGMAX is the highest allowed argument for EXP in your system.
 c------------------------------------------------------------------
-      REAL 		N0
-      DIMENSION 	ID(4), ST(5), XS(4)
+      REAL, intent(in) :: H, H0, N0
+      integer, intent(in) :: M, ID(M)
+      real, intent(in) :: ST(M+1), XS(M)
       COMMON  /ARGEXP/	ARGMAX
 
       SUM=(H-H0)*ST(1)
@@ -1643,7 +1644,10 @@ C SELECTS THE REQUIRED ION DENSITY PARAMETER SET.
 C THE INPUT FIELD INCLUDES DIFFERENT SETS OF DIMENSION M EACH
 C CARACTERISED BY 4 HEADER NUMBERS. RFE(4) SHOULD CONTAIN THE
 C CHOSEN HEADER NUMBERS.FE(M) IS THE CORRESPONDING SET.
-      DIMENSION RFE(4),FE(12),FIELD(80),EFE(4)
+      integer, intent(in) :: M
+      real, intent(inout) :: FE(M)
+      real, intent(in) :: RFE(4),FIELD(4*M)
+      real :: EFE(4)
       K=0
 100   DO 101 I=1,4
       K=K+1
@@ -1654,7 +1658,6 @@ C CHOSEN HEADER NUMBERS.FE(M) IS THE CORRESPONDING SET.
       DO 120 I=1,4
       IF((EFE(I).GT.-10.0).AND.(RFE(I).NE.EFE(I))) GOTO 100
 120   CONTINUE
-      RETURN
       END
 C
 C
