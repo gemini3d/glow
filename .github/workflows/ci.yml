@@ -2,6 +2,7 @@ name: ci
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1
+  CTEST_NO_TESTS_ACTION: error
 
 on:
   push:
@@ -21,24 +22,24 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
+
     timeout-minutes: 15
 
-    steps:
+    env:
+      FC: gfortran-12
 
-    - name: install gfortran
-      if: runner.os == 'macOS'
-      run: brew reinstall gcc
+    steps:
 
     - uses: actions/checkout@v3
 
     - name: Configure
-      run: cmake --preset default -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }} --install-prefix=${{ runner.temp }}
+      run: >
+        cmake --preset default
+        -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }}
+        --install-prefix=${{ runner.temp }}
 
-    - name: Build
-      run: cmake --build --preset default --parallel
-
-    - name: Test
-      run: ctest --preset default
+    - name: Build and test
+      run: cmake --workflow --preset default
 
     - name: Install
       run: cmake --install build
