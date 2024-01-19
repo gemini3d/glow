@@ -35,14 +35,13 @@ GIT_REPOSITORY ${glow_git}
 GIT_TAG ${glow_tag}
 CMAKE_ARGS ${glow_cmake_args}
 BUILD_BYPRODUCTS ${GLOW_LIBRARIES}
-INACTIVITY_TIMEOUT 15
 CONFIGURE_HANDLED_BY_BUILD true
 )
 
 file(MAKE_DIRECTORY ${GLOW_INCLUDE_DIRS})
 # avoid generate race condition
 
-add_library(glow::glow INTERFACE IMPORTED)
+add_library(glow::glow INTERFACE IMPORTED GLOBAL)
 target_link_libraries(glow::glow INTERFACE ${GLOW_LIBRARIES})
 target_include_directories(glow::glow INTERFACE ${GLOW_INCLUDE_DIRS})
 target_compile_definitions(glow::glow INTERFACE DATADIR="${CMAKE_INSTALL_PREFIX}/share/data/glow/")

@@ -10,6 +10,13 @@ enable_testing()
 include(cmake/options.cmake)
 include(cmake/compilers.cmake)
 
+file(GENERATE OUTPUT .gitignore CONTENT "*")
+
+# to make more usable by external programs, put all Fortran .mod generated module files in a single directory.
+set(CMAKE_Fortran_MODULE_DIRECTORY ${PROJECT_BINARY_DIR}/include)
+file(MAKE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY})
+# avoid race condition
+
 set(cglow_src glow.f90 cglow.f90 fieldm.f solzen.f90 ssflux.f90 rcolum.f90 qback.f90 etrans.f90 exsect.f gchem.f90 bands.f90 ephoto.f90 egrid.f90 maxt.f90)
 set(snoem_src snoem.f90 snoemint.f90 geomag.f90)
 set(utils_src mzgrid.f90 conduct.f90 iri90.f)
@@ -33,14 +40,13 @@ target_include_directories(glow PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-set_property(TARGET msis00 glow PROPERTY Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 add_library(glow::glow INTERFACE IMPORTED GLOBAL)
 target_link_libraries(glow::glow INTERFACE glow)
 
 install(TARGETS glow msis00 EXPORT ${PROJECT_NAME}-targets)
 
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/
+install(DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}/
 TYPE INCLUDE
 FILES_MATCHING PATTERN "*.mod"
 )
@@ -57,7 +63,7 @@ FILES_MATCHING PATTERN "*.asc"
 
 # --- tests
 
-if(BUILD_TESTING)
+if(${PROJECT_NAME}_BUILD_TESTING)
 
 add_executable(glowbasic glowbasic.f90)
 target_link_libraries(glowbasic PRIVATE glow)
@@ -66,6 +72,6 @@ COMMAND glowbasic basic.nml
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-endif(BUILD_TESTING)
+endif()
 
 include(cmake/install.cmake)
