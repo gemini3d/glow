@@ -1,5 +1,5 @@
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
-  set(glow_fflags -std=legacy)
+  set(glow_fflags -std=legacy -fno-implicit-none)
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^Intel")
   if(WIN32)
     add_compile_options($<$<CONFIG:Debug>:/Od>)
