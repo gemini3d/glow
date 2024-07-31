@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14...3.29)
+cmake_minimum_required(VERSION 3.14...3.30)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "please use out of source build
@@ -73,7 +73,7 @@ FILES_MATCHING PATTERN "*.asc"
 
 # --- tests
 
-if(${PROJECT_NAME}_BUILD_TESTING)
+if(glow_BUILD_TESTING)
 
 add_executable(glowbasic glowbasic.f90)
 target_link_libraries(glowbasic PRIVATE glow)
