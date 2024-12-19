@@ -28,7 +28,7 @@ jobs:
     timeout-minutes: 15
 
     env:
-      FC: gfortran-13
+      FC: gfortran-14
       CMAKE_INSTALL_PREFIX: ~/libs
 
     steps:
@@ -49,8 +49,6 @@ jobs:
   windows:
     timeout-minutes: 15
     runs-on: windows-latest
-    env:
-      CMAKE_GENERATOR: MinGW Makefiles
 
         # shared always error 135 even on only shared. not a problem on real pc.
 
@@ -68,3 +66,5 @@ jobs:
 
     - name: Configure
       run: cmake --workflow --preset default
+      env:
+        CMAKE_GENERATOR: "MinGW Makefiles"
