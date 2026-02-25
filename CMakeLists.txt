@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20...4.0)
+cmake_minimum_required(VERSION 3.20...4.3)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "please use out of source build
@@ -51,8 +51,7 @@ $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-add_library(glow::glow INTERFACE IMPORTED GLOBAL)
-target_link_libraries(glow::glow INTERFACE glow)
+add_library(glow::glow ALIAS glow)
 
 install(TARGETS glow msis00 EXPORT ${PROJECT_NAME}-targets)
 
@@ -76,7 +75,7 @@ FILES_MATCHING PATTERN "*.asc"
 if(glow_BUILD_TESTING)
 
 add_executable(glowbasic glowbasic.f90)
-target_link_libraries(glowbasic PRIVATE glow)
+target_link_libraries(glowbasic PRIVATE glow::glow)
 add_test(NAME glow_basic
 COMMAND glowbasic basic.nml
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
