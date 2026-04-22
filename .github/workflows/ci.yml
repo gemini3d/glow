@@ -2,9 +2,6 @@ name: ci
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1
-  CTEST_NO_TESTS_ACTION: error
-  CTEST_PARALLEL_LEVEL: 0
-  CMAKE_GENERATOR: Ninja
 
 on:
   push:
@@ -27,15 +24,12 @@ jobs:
   unix:
     strategy:
       matrix:
-        shared: [true, false]
+        preset: [default, shared]
         os: [ubuntu-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
 
     timeout-minutes: 15
-
-    env:
-      CMAKE_INSTALL_PREFIX: ~/libs
 
     steps:
 
@@ -46,13 +40,8 @@ jobs:
       if: runner.os == 'macOS'
       run: echo "FC=gfortran-15" >> $GITHUB_ENV
 
-    - name: Configure
-      run: >
-        cmake --preset default
-        -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }}
-
     - name: Build and test
-      run: cmake --workflow default
+      run: cmake --workflow ${{ matrix.preset }}
 
     - name: Install
       run: cmake --install build
@@ -60,6 +49,9 @@ jobs:
   windows:
     timeout-minutes: 15
     runs-on: windows-latest
+
+    env:
+      CMAKE_GENERATOR: Ninja
 
         # shared always error 135 even on only shared. not a problem on real pc.
 

@@ -4,22 +4,29 @@
 "configurePresets": [
 {
   "name": "default",
-  "binaryDir": "${sourceDir}/build",
+  "binaryDir": "build",
+  "installDir": "build/local",
   "cacheVariables": {
-    "CMAKE_COMPILE_WARNING_AS_ERROR": true
+    "CMAKE_COMPILE_WARNING_AS_ERROR": true,
+    "CMAKE_BUILD_TYPE": "Release"
+  }
+},
+{
+  "name": "shared", "inherits": "default",
+  "cacheVariables": {
+    "BUILD_SHARED_LIBS": true
   }
 }
 ],
 "buildPresets": [
-  {
-    "name": "default",
-    "configurePreset": "default"
-  }
+  { "name": "default", "configurePreset": "default", "jobs": 4 },
+  { "name": "shared", "configurePreset": "shared", "inherits": "default" }
 ],
 "testPresets": [
 {
   "name": "default",
   "configurePreset": "default",
+  "configuration": "Release",
   "output": {
     "outputOnFailure": true,
     "verbosity": "verbose"
@@ -28,26 +35,26 @@
     "noTestsAction": "error",
     "scheduleRandom": true,
     "stopOnFailure": false,
-    "timeout": 60
+    "jobs": 8
   }
-}
+},
+{ "name": "shared", "configurePreset": "shared", "inherits": "default" }
 ],
 "workflowPresets": [
   {
     "name": "default",
     "steps": [
-      {
-        "type": "configure",
-        "name": "default"
-      },
-      {
-        "type": "build",
-        "name": "default"
-      },
-      {
-        "type": "test",
-        "name": "default"
-      }
+      { "type": "configure", "name": "default" },
+      { "type": "build", "name": "default" },
+      { "type": "test", "name": "default" }
+    ]
+  },
+  {
+    "name": "shared",
+    "steps": [
+      { "type": "configure", "name": "shared" },
+      { "type": "build", "name": "shared" },
+      { "type": "test", "name": "shared" }
     ]
   }
 ]
