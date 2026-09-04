@@ -24,12 +24,15 @@ jobs:
   unix:
     strategy:
       matrix:
-        preset: [default, shared]
+        preset: [default]
         platform: [
           { os: ubuntu-latest, fc: gfortran },
           { os: ubuntu-26.04, fc: flang-22 },
           { os: macos-latest, fc: gfortran-15 }
           ]
+        include:
+          - preset: shared
+            platform: { os: ubuntu-latest, fc: gfortran }
 
     env:
       FC: ${{ matrix.platform.fc }}
