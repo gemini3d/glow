@@ -2,6 +2,6 @@
 
 include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake")
 
-set(glow_datadir @CMAKE_INSTALL_PREFIX@/share/data/@PROJECT_NAME@)
+set(glow_data_dir @CMAKE_INSTALL_PREFIX@/share/@PROJECT_NAME@/data/)
 
 check_required_components(@PROJECT_NAME@)

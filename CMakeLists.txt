@@ -12,7 +12,7 @@ endif()
 
 project(glow
 LANGUAGES Fortran
-VERSION 0.981.0.16
+VERSION 0.981.0.17
 )
 
 enable_testing()
@@ -59,14 +59,11 @@ $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
+set(glow_data_dir "${CMAKE_CURRENT_SOURCE_DIR}/data/" CACHE PATH "Directory for glow data files")
+
 add_library(glow ${cglow_src} ${snoem_src} ${utils_src})
 target_compile_options(glow PRIVATE ${glow_fflags})
 target_link_libraries(glow PRIVATE msis00)
-target_compile_definitions(glow INTERFACE
-# must have trailing / on each of these!
-$<BUILD_INTERFACE:DATADIR="${CMAKE_CURRENT_SOURCE_DIR}/data/">
-$<INSTALL_INTERFACE:DATADIR="${CMAKE_INSTALL_PREFIX}/share/data/${PROJECT_NAME}/">
-)
 target_include_directories(glow PUBLIC
 $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
@@ -81,13 +78,13 @@ TYPE INCLUDE
 FILES_MATCHING PATTERN "*.mod"
 )
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data/
-DESTINATION share/data/${PROJECT_NAME}
+install(DIRECTORY ${glow_data_dir}
+DESTINATION share/${PROJECT_NAME}/data/
 FILES_MATCHING PATTERN "*.dat"
 )
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/data/iri90/
-DESTINATION share/data/${PROJECT_NAME}/iri90
+install(DIRECTORY ${glow_data_dir}/iri90/
+DESTINATION share/${PROJECT_NAME}/data/iri90
 FILES_MATCHING PATTERN "*.asc"
 )
 
