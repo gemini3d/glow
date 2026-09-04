@@ -108,7 +108,7 @@
 
 subroutine ssflux (iscale,f107,f107a,xuvfac,wave1,wave2,sflux)
 
-use cglow,only: lmax,data_dir
+use cglow,only: lmax, glow_data_dir
 
 implicit none
 save
@@ -136,7 +136,7 @@ data b1/1.0, 0.0138, 0.005/, b2/1.0, 0.59425, 0.3811/
 
 if (iscale == 0) then
   if (islast /= iscale) then
-    filepath = trim(data_dir)//'ssflux_hint.dat'
+    filepath = trim(glow_data_dir)//'ssflux_hint.dat'
     open(newunit=u,file=filepath,status='old',action='read')
     read(u,*)
     do l=lmax,1,-1
@@ -160,7 +160,7 @@ endif
 
 if (iscale == 1) then
   if (islast /= iscale) then
-    filepath = trim(data_dir)//'ssflux_euvac.dat'
+    filepath = trim(glow_data_dir)//'ssflux_euvac.dat'
     open(newunit=u,file=filepath,status='old',action='read')
     read(u,*)
     do l=lmax,1,-1
@@ -183,7 +183,7 @@ endif
 
 if (iscale == 2) then
   if (islast /= iscale) then
-    filepath = trim(data_dir)//'ssflux_user.dat'
+    filepath = trim(glow_data_dir)//'ssflux_user.dat'
     open(newunit=u,file=filepath,status='old',action='read')
     read(u,*)
     do l=lmax,1,-1

@@ -41,7 +41,7 @@ use cglow,only: zz,zo,zn2,zo2,zns,znd,zno,ztn,ze,zti,zte
 use cglow,only: ener,del,phitop,wave1,wave2,sflux,pespec,sespec,uflx,dflx,sion
 use cglow,only: photoi,photod,phono,aglw,tei,tpi,tir,ecalc,zxden,zeta,zceta,zlbh
 use cglow,only: cglow_init
-use cglow,only: data_dir
+use cglow,only: glow_data_dir
 
 implicit none
 
@@ -73,10 +73,10 @@ itail=0
 fmono=0.
 emono=0.
 !
-! Set data directories:
+! Set default data directories:
 !
-data_dir    = 'data/'
-iri90_dir   = 'data/iri90/'
+glow_data_dir    = 'data/'
+iri90_dir   = glow_data_dir // 'iri90/'
 !
 ! Set number of altitude levels:
 !

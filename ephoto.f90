@@ -71,7 +71,7 @@ subroutine ephoto
   use cglow,only: jmax,nbins,lmax,nmaj,nst
   use cglow,only: wave1,wave2,phono,photoi,photod,pespec,zcol,sflux
   use cglow,only: zmaj,del,ener,zno
-  use cglow,only: data_dir
+  use cglow,only: glow_data_dir
 
   implicit none
   save
@@ -91,7 +91,7 @@ subroutine ephoto
   integer :: ifirst=1
   integer :: l,n,k,i,j,m,m1,m2
   real :: aa,bb,fac,e1,e2,y,r1,r2
-  character(len=1024) :: filepath
+  character(:), allocatable :: filepath
 
   nnn = (/5,4,6/)
   tpot(1:nst,1) = (/13.61, 16.93, 18.63, 28.50, 40.00,  0.00/)
@@ -114,7 +114,7 @@ subroutine ephoto
   if (ifirst == 1) then
     ifirst = 0
 
-    filepath = trim(data_dir)//'ephoto_xn2.dat'
+    filepath = trim(glow_data_dir)//'ephoto_xn2.dat'
     open(unit=1,file=filepath,status='old',action='read')
     read(1,*)
     read(1,*)
@@ -125,7 +125,7 @@ subroutine ephoto
     enddo
     close(1)
 
-    filepath = trim(data_dir)//'ephoto_xo2.dat'
+    filepath = trim(glow_data_dir)//'ephoto_xo2.dat'
     open(unit=1,file=filepath,status='old',action='read')
     read(1,*)
     read(1,*)
@@ -136,7 +136,7 @@ subroutine ephoto
     enddo
     close(1)
 
-    filepath = trim(data_dir)//'ephoto_xo.dat'
+    filepath = trim(glow_data_dir)//'ephoto_xo.dat'
     open(unit=1,file=filepath,status='old',action='read')
     read(1,*)
     read(1,*)
@@ -164,18 +164,18 @@ subroutine ephoto
       enddo
     enddo
 
-    do l=1,lmax 
-      do i=1,nmaj 
-        do k=1,nnn(i) 
-          epsil1(k,i,l)=12397.7/wave1(l)-tpot(k,i) 
-          epsil2(k,i,l)=12397.7/wave2(l)-tpot(k,i) 
+    do l=1,lmax
+      do i=1,nmaj
+        do k=1,nnn(i)
+          epsil1(k,i,l)=12397.7/wave1(l)-tpot(k,i)
+          epsil2(k,i,l)=12397.7/wave2(l)-tpot(k,i)
           if (wave1(l) <= augl(i)) then
             epsil1(k,i,l) = epsil1(k,i,l) - auge(i)
             epsil2(k,i,l) = epsil2(k,i,l) - auge(i)
           endif
         enddo
       enddo
-    enddo 
+    enddo
 
   endif       ! end of first-time-only conditional
 
@@ -188,14 +188,14 @@ subroutine ephoto
 
 ! Calculate attenuated solar flux at all altitudes and wavelengths:
 
-  do l=1,lmax 
+  do l=1,lmax
     do j=1,jmax
-      tau(l)=0. 
-      do i=1,nmaj 
-        tau(l)=tau(l)+sigabs(i,l)*zcol(i,j) 
+      tau(l)=0.
+      do i=1,nmaj
+        tau(l)=tau(l)+sigabs(i,l)*zcol(i,j)
       enddo
       if (tau(l) < 20.) then
-        flux(l,j)=sflux(l)*exp(-tau(l)) 
+        flux(l,j)=sflux(l)*exp(-tau(l))
       else
         flux(l,j) = 0.0
       endif
@@ -222,7 +222,7 @@ subroutine ephoto
 
 ! Loop over species:
 
-    do i=1,nmaj 
+    do i=1,nmaj
 
 ! Calculate total ionization rates for all species and altitudes:
 
@@ -232,26 +232,26 @@ subroutine ephoto
 
 ! Loop over states to calculate state-specific ionization rates at all altitudes:
 
-      do k=1,nnn(i) 
-        e1= epsil1(k,i,l) 
-        e2= epsil2(k,i,l) 
+      do k=1,nnn(i)
+        e1= epsil1(k,i,l)
+        e2= epsil2(k,i,l)
 
         if (e2 >= 0.) then
 
-          if (e1 < 0.) e1=0. 
+          if (e1 < 0.) e1=0.
           do j=1,jmax
-            dspect(j) = rion(l,i,j)*prob(k,i,l) 
+            dspect(j) = rion(l,i,j)*prob(k,i,l)
             photoi(k,i,j) = photoi(k,i,j) + dspect(j)
           enddo
 
 ! Find box numbers m1, m2 corresponding to energies e1, e2:
 
-          call boxnum (e1, e2, m1, m2, r1, r2, nbins, del, ener) 
+          call boxnum (e1, e2, m1, m2, r1, r2, nbins, del, ener)
 
 ! Fill the boxes from m1 to m2 at all altitudes:
 
           if (m1 <= nbins) then
-            y = e2 - e1 
+            y = e2 - e1
             do n=m1,m2
               if (m1 == m2) then
                 fac = 1.
@@ -281,7 +281,7 @@ subroutine ephoto
       if (wave1(l) <= augl(i)) then
         e1 = auge(i)
         e2 = auge(i)
-        call boxnum (e1, e2, m1, m2, r1, r2, nbins, del, ener) 
+        call boxnum (e1, e2, m1, m2, r1, r2, nbins, del, ener)
         if (m1 <= nbins .and. m2 <= nbins) then
           do j=1,jmax
             pespec(m1,j) = pespec(m1,j) + rion(l,i,j)
@@ -322,7 +322,7 @@ subroutine boxnum (e1, e2, m1, m2, r1, r2, nbins, del, ener)
         if (e2 < ener(j)+del(j)/2.) then
           m2 = j
           r2 = ener(j) - del(j)/2.
-          return 
+          return
         endif
       enddo
       m2 = nbins

@@ -23,7 +23,7 @@ glow_ncfile = 'out.decminmsis'
 
 ! directory containing data files for input to ephoto, snoem, and ssflux (default is data/).
 
-data_dir = 'data/'
+glow_data_dir = 'data/'
 
 ! directory containing IRI coefficient data files (default is data/iri90/):
 
@@ -43,7 +43,7 @@ writered = .false. ! switch controlling output of OI 6300 redline component exci
 indate    = 13355   ! date in yyddd format
 utstart   =  3600.  ! start universal time in seconds (e.g., 43200. would be 12 hours)
 utstep    =  3600.  ! time step in seconds
-utstop    =  3600.  ! end universal time in seconds 
+utstop    =  3600.  ! end universal time in seconds
 f107a     =    70.  ! F10.7 81-day centered average
 f107      =    70.  ! F10.7 daily value
 f107p     =    70.  ! F10.7 daily value for previous day

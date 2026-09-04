@@ -44,7 +44,7 @@ program glowdriver
   use cglow,only: zz,zo,zn2,zo2,zns,znd,zno,ztn,ze,zti,zte
   use cglow,only: ener,del,phitop,wave1,wave2,sflux,pespec,sespec,uflx,dflx,sion
   use cglow,only: photoi,photod,phono,aglw,ecalc,zxden,zeta,zceta,zlbh
-  use cglow,only: data_dir
+  use cglow,only: glow_data_dir
 
   use readtgcm,only: read_tgcm           ! subroutine to read tgcm history file
   use readtgcm,only: read_tgcm_coords    ! subroutine to read tgcm history coordinates
@@ -98,7 +98,7 @@ program glowdriver
     indate,utstart,utstep,utstop,nlat_msis,nlon_msis,f107a,f107,f107p,ap, &
     iscale,jlocal,kchem,xuvfac,ef,ec,itail,fmono,emono, &
     tgcm_ncfile,iri90_dir,jmax,glow_ncfile, &
-    start_mtime,stop_mtime,data_dir,writelbh,writered
+    start_mtime,stop_mtime,glow_data_dir,writelbh,writered
 
 ! Execute:
 
@@ -110,12 +110,12 @@ program glowdriver
   call mpi_comm_size(MPI_COMM_WORLD,nproc,mpierr)
 !
 ! Initialize tgcm_ncfile and start/stop times:
-! If start_mtime and/or stop_mtime are not read from namelist, model days of -999 
+! If start_mtime and/or stop_mtime are not read from namelist, model days of -999
 ! will flag find_mtimes to find the first and/or last histories on the file.
 !
   tgcm_ncfile = ' '
-  start_mtime = (/-999,0,0/) 
-  stop_mtime  = (/-999,0,0/) 
+  start_mtime = (/-999,0,0/)
+  stop_mtime  = (/-999,0,0/)
 !
 ! Root task only:  Read namelist inputs from input file.
 ! Read times, coordinates, 1D vars, from tgcm history file (tiegcm or timegcm), if provided.
@@ -137,7 +137,10 @@ program glowdriver
 ! Broadcast namelist inputs, tgcm coordinates, times, etc., to all processors:
 !
   call mpi_bcast(tgcm,1,MPI_LOGICAL,0,MPI_COMM_WORLD,mpierr)
-  call mpi_bcast(data_dir,1024,MPI_CHARACTER,0,MPI_COMM_WORLD,mpierr)
+
+  call mpi_bcast(glow_data_dir,len_trim(glow_data_dir),MPI_CHARACTER,0,MPI_COMM_WORLD,mpierr)
+  if(mpierr /= 0) error stop 'MPI broadcast of glow_data_dir failed'
+
   call mpi_bcast(iscale,1,MPI_INTEGER,0,MPI_COMM_WORLD,mpierr)
   call mpi_bcast(jlocal,1,MPI_INTEGER,0,MPI_COMM_WORLD,mpierr)
   call mpi_bcast(kchem,1,MPI_INTEGER,0,MPI_COMM_WORLD,mpierr)
@@ -204,7 +207,7 @@ program glowdriver
 !
 ! Assign latitude bands to processors:
 !
-  if (itask == 0 .and. (nlat/nproc)*nproc /= nlat) then 
+  if (itask == 0 .and. (nlat/nproc)*nproc /= nlat) then
     write(6,"('glow_drv: number of latitudes must be an integer multiple of number of processors')")
     write(6,"('NLAT =',i3,'   NPROC =',i3)") nlat,nproc
     stop
@@ -236,7 +239,7 @@ program glowdriver
 ! Get input fields if this is a tgcm run, otherwise use namelist inputs to MSIS/IRI/NOEM.
 ! Only do this section if this is the root task:
 !
-  if (itask == 0) then 
+  if (itask == 0) then
     if (tgcm) then
       call read_tgcm(tgcm_ncfile,itimes(itime))
       idate=iyear_tgcm*1000+iday_tgcm
@@ -271,7 +274,7 @@ program glowdriver
           if (stl >= 24.) stl = stl - 24.
           call mzgrid (jmax,nex,idate,ut,glat,glong,stl,f107a,f107,f107p,ap,iri90_dir, &
                      z,zo,zo2,zn2,zns,znd,zno,ztn,zun,zvn,ze,zti,zte,zxden)
-        endif 
+        endif
 !
 ! Fill global arrays:
 !
@@ -333,7 +336,7 @@ program glowdriver
         if (ef>.001 .and. ec>1.) call maxt(ef,ec,ener,del,nbins,itail,fmono,emono,phitop)
       else
         if (ef>.001 .and. ec>1.) call maxt (ef,ec,ener,del,nbins,itail,fmono,emono,phitop)
-      endif 
+      endif
 !
 ! Transfer global fields back to altitude arrays at specific lat/lon:
 !
@@ -424,7 +427,7 @@ program glowdriver
 ! Output section:
 ! Create and define a new netCDF output file for each time (root task only):
 !
-  if (itask == 0) then 
+  if (itask == 0) then
     write (ifile,"('.',i3.3,'.nc')"),itime
     glow_ncfileit = trim(glow_ncfile) // ifile
     call create_ncfile(glow_ncfileit,tgcm_ncfile)

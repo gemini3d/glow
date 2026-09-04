@@ -68,7 +68,7 @@ module cglow
 
 ! Directory containing data files needed by glow subroutines:
 
-  character(len=1024) :: data_dir
+  character(:), allocatable :: glow_data_dir
 
   integer :: idate,iscale,jlocal,kchem,ierr
   real    :: ut,glat,glong,f107,f107a,f107p,ap,ef,ec
@@ -78,7 +78,7 @@ module cglow
   real,allocatable,dimension(:) ::             &                   ! (jmax)
     zz, zo, zn2, zo2, zno, zns, znd, zrho, ze, &
     ztn, zti, zte, eheat, tez, ecalc, tei, tpi, tir
-  real,allocatable,dimension(:)     :: phitop, ener, del           ! (nbins) 
+  real,allocatable,dimension(:)     :: phitop, ener, del           ! (nbins)
   real,allocatable,dimension(:)     :: wave1, wave2, sflux         ! (lmax)
   real,allocatable,dimension(:,:)   :: pespec, sespec, uflx, dflx  ! (nbins,jmax)
   real,allocatable,dimension(:,:)   :: zmaj, zcol, pia, sion       ! (nmaj,jmax)
@@ -149,7 +149,7 @@ module cglow
       (zmaj(nmaj,jmax), &
        zcol(nmaj,jmax), &
        pia (nmaj,jmax), &
-       sion(nmaj,jmax)) 
+       sion(nmaj,jmax))
 
     allocate &
       (aglw  (nei,nmaj,jmax), &
