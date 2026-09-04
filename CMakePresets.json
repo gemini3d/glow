@@ -4,6 +4,7 @@
 "configurePresets": [
 {
   "name": "default",
+  "generator": "Ninja",
   "binaryDir": "build",
   "installDir": "build/local",
   "cacheVariables": {
@@ -19,7 +20,7 @@
 }
 ],
 "buildPresets": [
-  { "name": "default", "configurePreset": "default", "jobs": 4 },
+  { "name": "default", "configurePreset": "default"},
   { "name": "shared", "configurePreset": "shared", "inherits": "default" }
 ],
 "testPresets": [

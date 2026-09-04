@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20...4.3)
+cmake_minimum_required(VERSION 3.20...4.5)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "please use out of source build
@@ -17,8 +17,18 @@ VERSION 0.981.0.16
 
 enable_testing()
 
-include(cmake/options.cmake)
-include(cmake/compilers.cmake)
+include(GNUInstallDirs)
+
+message(STATUS "${PROJECT_NAME} ${PROJECT_VERSION}  CMake ${CMAKE_VERSION} Toolchain ${CMAKE_TOOLCHAIN_FILE}")
+
+option(glow_BUILD_TESTING "Build tests" ${glow_IS_TOP_LEVEL})
+
+# Necessary for shared library with Visual Studio / Windows oneAPI
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS true)
+
+if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
+  set(glow_fflags -std=legacy -fno-implicit-none)
+endif()
 
 file(GENERATE OUTPUT .gitignore CONTENT "*")
 
