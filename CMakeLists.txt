@@ -27,7 +27,8 @@ option(glow_BUILD_TESTING "Build tests" ${glow_IS_TOP_LEVEL})
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS true)
 
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
-  set(glow_fflags -std=legacy -fno-implicit-none)
+  set(glow_legacy_flag -std=legacy)
+  set(glow_implicit_flag -fno-implicit-none)
 endif()
 
 file(GENERATE OUTPUT .gitignore CONTENT "*")
@@ -40,6 +41,16 @@ file(MAKE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY})
 set(cglow_src glow.f90 cglow.f90 fieldm.f solzen.f90 ssflux.f90 rcolum.f90 qback.f90 etrans.f90 exsect.f gchem.f90 bands.f90 ephoto.f90 egrid.f90 maxt.f90)
 set(snoem_src snoem.f90 snoemint.f90 geomag.f90)
 set(utils_src mzgrid.f90 conduct.f90 iri90.f)
+
+set_property(SOURCE nrlmsise00.f iri90.f exsect.f fieldm.f
+APPEND
+PROPERTY COMPILE_OPTIONS ${glow_legacy_flag}
+)
+
+set_property(SOURCE msise00_data.f nrlmsise00.f iri90.f fieldm.f geomag.f90
+APPEND
+PROPERTY COMPILE_OPTIONS ${glow_implicit_flag}
+)
 
 add_library(msis00 nrlmsise00.f msise00_data.f)
 target_compile_options(msis00 PRIVATE ${glow_fflags})
