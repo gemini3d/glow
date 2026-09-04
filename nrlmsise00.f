@@ -448,7 +448,7 @@ C         New altitude estimate using scale height
         GOTO 10
    20 CONTINUE
       IF(L.EQ.LTEST) write(stderr,100) PRESS,DIFF
-  100 FORMAT(1X,29HGHP7 NOT CONVERGING FOR PRESS, 1PE12.2,E12.2)
+  100 FORMAT(1X,'GHP7 NOT CONVERGING FOR PRESS', 1PE12.2,E12.2)
       ALT=Z
 
       END SUBROUTINE GHP7
