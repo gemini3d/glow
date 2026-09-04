@@ -27,6 +27,7 @@ jobs:
         preset: [default, shared]
         platform: [
           { os: ubuntu-latest, fc: gfortran },
+          { os: ubuntu-26.04, fc: flang-22 },
           { os: macos-latest, fc: gfortran-15 }
           ]
 
@@ -38,6 +39,11 @@ jobs:
     timeout-minutes: 15
 
     steps:
+    - name: Flang (linux)
+      if: ${{ startsWith(matrix.platform.fc, 'flang') && runner.os == 'Linux' }}
+      run: |
+        sudo apt update
+        sudo apt install --no-install-recommends ${{ matrix.platform.fc }}
 
     - &checkout
       uses: actions/checkout@v7
