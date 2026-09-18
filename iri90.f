@@ -9,7 +9,6 @@ C Replaced height range and interval with array of heights ZKM
 C Also supply number of heights NZ; unlimited number of heights allowed.
 C Added DIRECT argument to specify location of CCIR and URSI files.
 C Uses ASCII versions of CCIR and URSI files.
-C Subroutine DFP splices directory and filename together.
 C Accepts longitudes -180 to +180; maps internal longitudes 0-360.
 C Added SAVE statements for volatile memory machines.
 C Changed 'file not found' error to output message on unit 6 and stop.
@@ -165,7 +164,7 @@ C
      &  stderr=>error_unit
       dimension zkm(nz), outf(11,nz), oarr(30)
       character(*), intent(in) :: direct
-      character(1024) :: path
+      character(:), allocatable :: path
       character(10) :: filename
       integer :: IUCCIR
       INTEGER 		EGNR,AGNR,DAYNR,DDO,DO2,SEASON,SEADAY
@@ -420,7 +419,7 @@ C READ CCIR COEFFICIENT SET FOR CHOSEN MONTH....................
 C
 7797    WRITE(filename,104) MONTH+10
 104     FORMAT('ccir',I2,'.asc')
-        call dfp(direct,filename,path)
+        path = trim(direct) // '/' // trim(filename)
         OPEN(newunit=IUCCIR,FILE=path,STATUS='OLD',ERR=8448)
         READ(IUCCIR,4689) F2,FM3
 4689    FORMAT(4E15.8)
@@ -431,7 +430,7 @@ C
 	if (URSIF2) then
 	  WRITE(filename,1144) MONTH+10
 1144      FORMAT('ursi',I2,'.asc')
-          call dfp(direct,filename,path)
+          path = trim(direct) // '/' // trim(filename)
           OPEN(newunit=IUCCIR,FILE=path,STATUS='OLD',ERR=8448)
           READ(IUCCIR,4689) F2
           CLOSE(IUCCIR)
@@ -1025,36 +1024,7 @@ C
 3330  CONTINUE
       RETURN
       END
-C
-C
-C Subroutine DFP, Stan Solomon, 3/92, splices filename to directory
-C
-      subroutine dfp(direct,filename,path)
-      character*(*) direct,filename,path
-      character*50 blanks
-      data blanks/'                                                  '/
-      path=blanks
-      nch=len(direct)
-      do 10 i=1,nch
-      if (direct(i:i).ne.' ') goto 20
-   10 continue
-   20 lb=i
-      do 30 i=nch,1,-1
-      if (direct(i:i).ne.' ') goto 40
-   30 continue
-   40 le=i
-      if (lb.ge.nch .or. le.le.0) then
-        path(1:10)=filename(1:10)
-      else
-        nd=le-lb+1
-        path(1:nd)=direct(lb:le)
-        path(nd+1:nd+10)=filename(1:10)
-      endif
-      return
-      end
-C
-C
-C
+
 C
 C IRIF12.FOR ------------------------------------- OCTOBER 1991
 C**************************************************************
@@ -1137,8 +1107,8 @@ C
 C
       FUNCTION DXE1N(H)
 C LOGARITHMIC DERIVATIVE OF FUNCTION XE1 (KM-1).
-      COMMON	/BLOCK1/	HMF2,XNMF2,HMF1
-     &		/BLO10/		BETA,ETA,DELTA,ZETA
+      COMMON  /BLOCK1/   HMF2,XNMF2,HMF1
+     &        /BLO10/    BETA,ETA,DELTA,ZETA
 
 	x0 = 300. - delta
       X=(H-HMF2)/(1000.0-HMF2)*700.0 + x0
