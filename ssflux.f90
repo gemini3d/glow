@@ -136,7 +136,7 @@ data b1/1.0, 0.0138, 0.005/, b2/1.0, 0.59425, 0.3811/
 
 if (iscale == 0) then
   if (islast /= iscale) then
-    filepath = trim(glow_data_dir)//'ssflux_hint.dat'
+    filepath = glow_data_dir // '/ssflux_hint.dat'
     open(newunit=u,file=filepath,status='old',action='read')
     read(u,*)
     do l=lmax,1,-1
@@ -160,7 +160,7 @@ endif
 
 if (iscale == 1) then
   if (islast /= iscale) then
-    filepath = trim(glow_data_dir)//'ssflux_euvac.dat'
+    filepath = glow_data_dir // '/ssflux_euvac.dat'
     open(newunit=u,file=filepath,status='old',action='read')
     read(u,*)
     do l=lmax,1,-1
@@ -183,7 +183,7 @@ endif
 
 if (iscale == 2) then
   if (islast /= iscale) then
-    filepath = trim(glow_data_dir)//'ssflux_user.dat'
+    filepath = glow_data_dir // '/ssflux_user.dat'
     open(newunit=u,file=filepath,status='old',action='read')
     read(u,*)
     do l=lmax,1,-1

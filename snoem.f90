@@ -36,7 +36,7 @@
 
       if (ifirst == 1) then
         ifirst = 0
-        filepath = trim(glow_data_dir)//'snoem_eof.dat'
+        filepath = glow_data_dir // '/snoem_eof.dat'
         open(unit=1,file=filepath,status='old',action='read')
         read(1,*) (zin(k),k=1,16)
         read(1,*) (mlatin(j),j=1,33)

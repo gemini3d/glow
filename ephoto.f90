@@ -114,7 +114,7 @@ subroutine ephoto
   if (ifirst == 1) then
     ifirst = 0
 
-    filepath = trim(glow_data_dir)//'ephoto_xn2.dat'
+    filepath = glow_data_dir // '/ephoto_xn2.dat'
     open(unit=1,file=filepath,status='old',action='read')
     read(1,*)
     read(1,*)
@@ -125,7 +125,7 @@ subroutine ephoto
     enddo
     close(1)
 
-    filepath = trim(glow_data_dir)//'ephoto_xo2.dat'
+    filepath = glow_data_dir // '/ephoto_xo2.dat'
     open(unit=1,file=filepath,status='old',action='read')
     read(1,*)
     read(1,*)
@@ -136,7 +136,7 @@ subroutine ephoto
     enddo
     close(1)
 
-    filepath = trim(glow_data_dir)//'ephoto_xo.dat'
+    filepath = glow_data_dir // '/ephoto_xo.dat'
     open(unit=1,file=filepath,status='old',action='read')
     read(1,*)
     read(1,*)

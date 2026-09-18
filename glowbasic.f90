@@ -76,7 +76,7 @@ emono=0.
 ! Set default data directories:
 !
 glow_data_dir    = 'data/'
-iri90_dir   = glow_data_dir // 'iri90/'
+iri90_dir   = glow_data_dir // '/iri90/'
 !
 ! Set number of altitude levels:
 !
