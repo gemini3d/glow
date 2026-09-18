@@ -166,7 +166,8 @@ C
       dimension zkm(nz), outf(11,nz), oarr(30)
       character(*), intent(in) :: direct
       character(1024) :: path
-      character(10) filename
+      character(10) :: filename
+      integer :: IUCCIR
       INTEGER 		EGNR,AGNR,DAYNR,DDO,DO2,SEASON,SEADAY
       REAL 		LATI,LONGI,MO2,MO,MODIP,NMF2,MAGBR
       REAL  		NMF1,NME,NMD,NEI,MM,MLAT,MLONG,NOBO2
@@ -250,7 +251,6 @@ C AGNR=OUTPUT (OUTPUT IS DISPLAYED OR STORED IN FILE OUTPUT.IRI)...
 C IUCCIR=UNIT NUMBER FOR CCIR COEFFICIENTS ........................
 C
       MONITO=6
-      IUCCIR=10
       KONSOL=stderr
 !      IF (JF(12)) KONSOL=12
 
@@ -421,7 +421,7 @@ C
 7797    WRITE(filename,104) MONTH+10
 104     FORMAT('ccir',I2,'.asc')
         call dfp(direct,filename,path)
-        OPEN(IUCCIR,FILE=path,STATUS='OLD',ERR=8448)
+        OPEN(newunit=IUCCIR,FILE=path,STATUS='OLD',ERR=8448)
         READ(IUCCIR,4689) F2,FM3
 4689    FORMAT(4E15.8)
         CLOSE(IUCCIR)
@@ -432,7 +432,7 @@ C
 	  WRITE(filename,1144) MONTH+10
 1144      FORMAT('ursi',I2,'.asc')
           call dfp(direct,filename,path)
-          OPEN(IUCCIR,FILE=path,STATUS='OLD',ERR=8448)
+          OPEN(newunit=IUCCIR,FILE=path,STATUS='OLD',ERR=8448)
           READ(IUCCIR,4689) F2
           CLOSE(IUCCIR)
 	endif

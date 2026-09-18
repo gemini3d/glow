@@ -89,7 +89,7 @@ subroutine ephoto
 
   real,parameter :: signo = 2.0e-18
   integer :: ifirst=1
-  integer :: l,n,k,i,j,m,m1,m2
+  integer :: l,n,k,i,j,m1,m2, u
   real :: aa,bb,fac,e1,e2,y,r1,r2
   character(:), allocatable :: filepath
 
@@ -115,37 +115,37 @@ subroutine ephoto
     ifirst = 0
 
     filepath = glow_data_dir // '/ephoto_xn2.dat'
-    open(unit=1,file=filepath,status='old',action='read')
-    read(1,*)
-    read(1,*)
-    read(1,*)
-    read(1,*)
+    open(newunit=u,file=filepath,status='old',action='read')
+    read(u,*)
+    read(u,*)
+    read(u,*)
+    read(u,*)
     do l=lmax,1,-1
-      read(1,*) aa,bb,(probn2(n,l),n=1,nst),sigin2(l),sigan2(l)
+      read(u,*) aa,bb,(probn2(n,l),n=1,nst),sigin2(l),sigan2(l)
     enddo
-    close(1)
+    close(u)
 
     filepath = glow_data_dir // '/ephoto_xo2.dat'
-    open(unit=1,file=filepath,status='old',action='read')
-    read(1,*)
-    read(1,*)
-    read(1,*)
-    read(1,*)
+    open(newunit=u,file=filepath,status='old',action='read')
+    read(u,*)
+    read(u,*)
+    read(u,*)
+    read(u,*)
     do l=lmax,1,-1
-      read(1,*) aa,bb,(probo2(n,l),n=1,nst),sigio2(l),sigao2(l)
+      read(u,*) aa,bb,(probo2(n,l),n=1,nst),sigio2(l),sigao2(l)
     enddo
-    close(1)
+    close(u)
 
     filepath = glow_data_dir // '/ephoto_xo.dat'
-    open(unit=1,file=filepath,status='old',action='read')
-    read(1,*)
-    read(1,*)
-    read(1,*)
-    read(1,*)
+    open(newunit=u,file=filepath,status='old',action='read')
+    read(u,*)
+    read(u,*)
+    read(u,*)
+    read(u,*)
     do l=lmax,1,-1
-      read(1,*) aa,bb,(probo(n,l),n=1,nst),sigio(l),sigao(l)
+      read(u,*) aa,bb,(probo(n,l),n=1,nst),sigio(l),sigao(l)
     enddo
-    close(1)
+    close(u)
 
     do l=1,lmax
       sigabs(1,l) = sigao(l)  * 1.e-18

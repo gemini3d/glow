@@ -29,7 +29,7 @@
       real :: m1, m2, m3             ! coefficients for first 3 eofs
       real, parameter :: pi=3.1415926536
       integer, save :: ifirst=1
-      integer :: j, k, n
+      integer :: j, k, n, u
       character(:), allocatable :: filepath
 
 !... read eof file on first call
@@ -37,12 +37,12 @@
       if (ifirst == 1) then
         ifirst = 0
         filepath = glow_data_dir // '/snoem_eof.dat'
-        open(unit=1,file=filepath,status='old',action='read')
-        read(1,*) (zin(k),k=1,16)
-        read(1,*) (mlatin(j),j=1,33)
-        read(1,*) ((no_mean(j,k),j=1,33),k=1,16)
-        read(1,*) (((eofs(j,k,n),j=1,33),k=1,16),n=1,3)
-        close(unit=1)
+        open(newunit=u,file=filepath,status='old',action='read')
+        read(u,*) (zin(k),k=1,16)
+        read(u,*) (mlatin(j),j=1,33)
+        read(u,*) ((no_mean(j,k),j=1,33),k=1,16)
+        read(u,*) (((eofs(j,k,n),j=1,33),k=1,16),n=1,3)
+        close(u)
       endif
 
 !... calculate coefficients (m1 to m3) for eofs based on geophysical parameters
